@@ -27,9 +27,12 @@ import { appointmentData, clinicData } from '~/app/getToken';
 import { useRouter } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import { ALERT_TYPE, AlertNotificationRoot, Dialog } from 'react-native-alert-notification';
+import * as SecureStore from 'expo-secure-store';
 
 const Page = () => {
   const router = useRouter();
+
+  const token = SecureStore.getItem("token")
 
   const [date, setDate] = useState<DateType>(dayjs());
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -121,7 +124,7 @@ const Page = () => {
     });
 
     axios
-      .get(`${url}viewAppointments?token=17098037520533984&visitDate=&clinicId=1`)
+      .get(`${url}viewAppointments?token=${token}&visitDate=&clinicId=1`)
       .then((res) => {
         console.log('Checkup Response:', JSON.stringify(res.data.data, null, 2));
 
@@ -133,21 +136,24 @@ const Page = () => {
           setVisitDate(item.visitDate);
           setTokenNumber(item.tokenNumber);
 
-          console.log('Response id: ', item.id);
+          console.log('Response Appointment id: ', item.id);
           console.log('Response patientName: ', item.patientName);
           console.log('Response clinicName: ', item.clinicName);
           console.log('Response doctorName: ', item.doctorName);
           console.log('Response visitDate: ', item.visitDate);
           console.log('Response tokenNumber: ', item.tokenNumber);
+
+          console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
+          
+          console.log('Local Appointment Id:', appId);
+          console.log('Local Patient Name:', patientName);
+          console.log('Local Clinic Name:', clinicName);
+          console.log('Local Doctor Name:', doctorName);
+          console.log('Local Visit Date:', visitDate);
+          console.log('Local Token Number:', tokenNumber);
+          console.log('Local Followup Date:', follDate);
         });
 
-        console.log('Appointment Id:', appId);
-        console.log('Patient Name:', patientName);
-        console.log('Clinic Name:', clinicName);
-        console.log('Doctor Name:', doctorName);
-        console.log('Visit Date:', visitDate);
-        console.log('Token Number:', tokenNumber);
-        console.log('Followup Date:', follDate);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -182,7 +188,7 @@ const Page = () => {
 
   const updateAppointment = () => {
     axios
-      .get(`${url}setAppointment?token=17098037520533984&appointment=${encodedAppObj}`)
+      .get(`${url}setAppointment?token=${token}&appointment=${encodedAppObj}`)
       .then((res) => {
         //console.log('Response:', JSON.stringify(res.data, null, 2));
 

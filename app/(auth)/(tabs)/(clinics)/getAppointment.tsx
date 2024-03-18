@@ -10,14 +10,11 @@ import { colors } from '~/app/styles';
 import TitleBar from '~/components/TitleBar';
 import { url } from '~/env';
 import * as SecureStore from 'expo-secure-store';
-
+import dayjs from 'dayjs';
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState('PENDING');
 
-  const token = SecureStore.getItem('token');
-
-  const [clinicId, setClinicId] = useState<number>();
   const [dateOfApp, setDateOfApp] = useState('');
 
   const [loading, setLoading] = useState(true);
@@ -30,33 +27,16 @@ export default function Page() {
     setActiveTab(tab);
   };
 
-  const getAppointmentData = () => {
-    clinicData.getClinicId('clinicId').then((res) => {
-      if (res) {
-        setClinicId(res);
-        console.log('AsyncClinicId:', res);
-      } else {
-        console.log('No ClinicId found');
-      }
-    });
-
-    // tokenCache.getToken('dateOfApp').then((res) => {
-    //   if (res) {
-    //     setDateOfApp(res);
-    //     console.log('AsyncDateOfApp:', res);
-    //   } else {
-    //     console.log('No DateOfApp found');
-    //   }
-    // });
-  };
-  
-
   //USE YOUR OWN URL!!
   useEffect(() => {
-    getAppointmentData();
+    const token = SecureStore.getItem('token');
+    const clinicId = SecureStore.getItem('clinicId');
+
     // Axios GET request to fetch doctors data
     axios
-      .get(`${url}viewAppointments?token=171014259024011-03-2024-12-36-27&visitDate=&clinicId=1`)
+      .get(
+        `${url}viewAppointments?token=${token}&visitDate=&clinicId=${clinicId}&appointmentId=0&patientId=0&doctorId=0&followupDate`
+      )
       .then((res) => {
         console.log('Response:', JSON.stringify(res.data.data, null, 2));
         setAppData(res.data.data.appointments);
@@ -64,12 +44,11 @@ export default function Page() {
 
         res.data.data.appointments.map((item: any) => {
           if (!successApps.some((app: any) => app.id === item.id) && item.status === 1) {
-              successApps.push(item);
+            successApps.push(item);
           } else if (!pendingApps.some((app: any) => app.id === item.id) && item.status !== 1) {
-              pendingApps.push(item);
+            pendingApps.push(item);
           }
-          appointmentData.setAppointmentId("appointmentId", item.id.toString());
-      });
+        });
 
         console.log('Pending Apps:', JSON.stringify(pendingApps, null, 2));
         console.log('Successfull Apps:', JSON.stringify(successApps, null, 2));
@@ -77,8 +56,16 @@ export default function Page() {
       })
       .catch((error) => {
         console.error('Error fetching Succ/Pen Appointments:', error);
+        console.log('SET APP TOKEN:', token);
+        console.log('SET APP clinicId:', clinicId);
       });
   }, []);
+
+  const goToHisory = (val: string) => {
+    SecureStore.setItem('patientId', val);
+    router.push('/patientHistory');
+    console.log('Patient ID:', val);
+  };
 
   return (
     <SafeAreaView style={{ rowGap: 10, padding: 10, backgroundColor: colors.linkBlue, flex: 1 }}>
@@ -156,15 +143,15 @@ export default function Page() {
                 </XStack>
                 <XStack gap={5}>
                   <Text fontFamily={'ArialB'} fontSize={18} color={colors.yellow}>
-                    Age:
+                    Appointment Date:
                   </Text>
                   <Text fontFamily={'ArialB'} fontSize={18} color={colors.primary}>
-                    0
+                    {dayjs(item.visitDate).format('DD-MMM-YYYY')}
                   </Text>
                 </XStack>
                 <XStack gap={10}>
                   <Button
-                    onPress={() => router.push('/patientHistory')}
+                    onPress={() => goToHisory(item.patientId.toString())}
                     flex={1}
                     backgroundColor={colors.yellow}>
                     <ButtonText fontFamily={'ArialB'} fontSize={14} color={colors.white}>
@@ -232,19 +219,11 @@ export default function Page() {
                 </XStack>
                 <XStack gap={10}>
                   <Button
-                    onPress={() => router.push('/patientHistory')}
+                    onPress={() => goToHisory(item.patientId.toString())}
                     flex={1}
                     backgroundColor={colors.yellow}>
                     <ButtonText fontFamily={'ArialB'} fontSize={14} color={colors.white}>
                       Patient History
-                    </ButtonText>
-                  </Button>
-                  <Button
-                    onPress={() => router.push('checkup')}
-                    flex={1}
-                    backgroundColor={colors.primary}>
-                    <ButtonText fontFamily={'ArialB'} fontSize={14} color={colors.white}>
-                      Checkup
                     </ButtonText>
                   </Button>
                 </XStack>

@@ -16,7 +16,7 @@ import { url } from '~/env';
 import { useDispatch } from 'react-redux';
 import { addUser } from '~/context/actions/userActions';
 import { colors, styles } from '~/app/styles';
-import { tokenCache } from '~/app/getToken';
+import * as SecureStore from 'expo-secure-store';
 
 const LoginCard = () => {
   const dispatch = useDispatch();
@@ -91,17 +91,11 @@ const LoginCard = () => {
           dispatch(addUser(USER));
 
           console.log('RESPONSE STATUS: ', JSON.stringify(response.status, null, 2));
-          console.log('TOKEN: ', JSON.stringify(response.data.data.token, null, 2));
-          tokenCache.setToken('token', response.data.data.token)
-            .then(() => {
-              console.log('Token stored successfully');
-              setLoading(false);
-              router.replace('/(auth)/(tabs)/(clinics)/');
-            })
-            .catch((error) => {
-              console.error('Error storing token: ', error);
-              setLoading(false);
-            });
+          console.log('LOGIN TOKEN: ', JSON.stringify(response.data.data.token, null, 2));
+          SecureStore.setItem('token', response.data.data.token);
+          console.log('Token stored successfully');
+          setLoading(false);
+          router.replace('/(auth)/(tabs)/(clinics)/');
         } else {
           console.log('Error, Status code: ', response.status);
           setLoading(false);

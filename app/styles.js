@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: colors.primary,
     gap: 10,
-    padding: 10,
+    paddingHorizontal: 10,
     flex: 1,
   },
   imgStyle: {
@@ -55,7 +55,9 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
   primBtn: {
-    flex:1,
+    //flex:1,
+    borderColor:"white",
+    borderWidth:1,
     borderRadius: 5,
     backgroundColor: colors.primary,
     padding: 10,
@@ -63,7 +65,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   secBtn: {
-    flex:1,
+    //flex:1,
     borderRadius: 5,
     backgroundColor: colors.yellow,
     padding: 10,

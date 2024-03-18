@@ -1,6 +1,6 @@
 import { FlatList, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Card, Text, XStack } from 'tamagui';
+import { Card, Text, XStack, YStack } from 'tamagui';
 import axios from 'axios';
 import { colors, styles } from '~/app/styles';
 import { url } from '~/env';
@@ -8,7 +8,6 @@ import TitleBar from '~/components/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import Spinner from '~/components/Spinner';
-import { clinicData } from '~/app/getToken';
 import { TouchableOpacity } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
@@ -25,26 +24,29 @@ const Page = () => {
   //USE YOUR OWN URL!!
   useEffect(() => {
     // Axios GET request to fetch doctors data
+    console.log('Token RES:', token);
     axios
       .get(`${url}getClinics?token=${token}`)
       .then((res) => {
         console.log('Response Clinic Data:', JSON.stringify(res.data.data, null, 2));
+        
+        SecureStore.setItem("doctorId",res.data.data.id.toString())
+
 
         setclinicArr(res.data.data.doctorClinicDALS);
         setLoading(false);
 
-        res.data.data.doctorClinicDALS.map((item: any) => {
-          const clinicID = item.clinic.id;
-          console.log('Clinic ID:', item.clinic.id);
-          axios
-            .get(`${url}viewAppointments?token=${token}&visitDate=&clinicId=${clinicID}`)
-            .then((res) => {
-              console.log('Response ViewAppointment Data:', JSON.stringify(res.data.data, null, 2));
-              //totalApps += res.data.data.appointments.length;
-              setTotalAppointment(res.data.data.appointments.length);
-              console.log('Total Overall Appointments:', totalAppointments);
-            });
-        });
+        // res.data.data.doctorClinicDALS.map((item: any) => {
+        //   const clinicID = item.clinic.id;
+        //   //console.log('Clinic ID:', item.clinic.id);
+        //   axios
+        //     .get(`${url}viewAppointments?token=${token}&visitDate=&clinicId=${clinicID}`)
+        //     .then((res) => {
+        //       //console.log('Response ViewAppointment Data:', JSON.stringify(res.data.data, null, 2));
+        //       setTotalAppointment(res.data.data.appointments.length);
+        //       //console.log('Total Overall Appointments:', totalAppointments);
+        //     });
+        // });
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -52,8 +54,9 @@ const Page = () => {
   }, []);
 
   const handleViewAppointment = (clinicId: string, dateOfApp: string) => {
-    clinicData.setClinicId('clinicId', clinicId);
+    SecureStore.setItem('clinicId', clinicId);
     router.push('/getAppointment');
+    console.log('HomeScreen Clinic ID:', clinicId);
   };
 
   return (
@@ -70,22 +73,12 @@ const Page = () => {
           Pending Appointments today: <Text color={colors.yellow}>{pendingApps}</Text>
         </Text>
       </Card>
-      <Card
-        unstyled
-        borderWidth={1}
-        borderColor={colors.white}
-        flex={1}
-        padding={10}
-        justifyContent="center"
-        backgroundColor={colors.lightGray}
-        animation="bouncy"
-        gap={10}>
         {loading ? (
           <Spinner title="Loading your Clinics" />
         ) : (
           <>
-            <Text fontFamily={'ArialB'} color={colors.linkBlue} alignSelf="center" fontSize={24}>
-              Clinics List
+            <Text fontFamily={'ArialB'} color={colors.white} alignSelf="center" fontSize={24}>
+              Clinic List
             </Text>
             <FlatList
               refreshing={true}
@@ -94,7 +87,7 @@ const Page = () => {
               data={clinicArr}
               //keyExtractor={(item: any) => item.id.toString()}
               renderItem={({ item }) => (
-                <View style={{ paddingBottom: 10, gap: 5 }}>
+                <View style={{ paddingBottom: 15, gap: 5 }}>
                   {/* Doctor's information */}
                   <Card
                     style={{
@@ -144,20 +137,7 @@ const Page = () => {
                   </Card>
                   {/* Check Appointment Button */}
                   <XStack gap={5}>
-                    {/* <Button flex={1} style={styles.primBtn}>
-                      <Text color={colors.white} fontSize={13} fontFamily={'ArialB'}>
-                        Get Token
-                      </Text>
-                    </Button>
-                    <Button
-                      flex={1}
-                      onPress={() => handleViewAppointment(item.clinic.id.toString(), '2024-03-04')}
-                      style={styles.secBtn}>
-                      <Text color={colors.white} fontSize={13} fontFamily={'ArialB'}>
-                        View Appoinments
-                      </Text>
-                    </Button> */}
-                    <TouchableOpacity activeOpacity={0.6} style={styles.primBtn}>
+                    <TouchableOpacity activeOpacity={0.6} style={[styles.primBtn,{flex:1}]}>
                       <Text color={colors.white} fontSize={13} fontFamily={'ArialB'}>
                         Get Token
                       </Text>
@@ -165,7 +145,7 @@ const Page = () => {
                     <TouchableOpacity
                       activeOpacity={0.6}
                       onPress={() => handleViewAppointment(item.clinic.id.toString(), '2024-03-04')}
-                      style={styles.secBtn}>
+                      style={[styles.secBtn,{flex:1}]}>
                       <Text color={colors.white} fontSize={13} fontFamily={'ArialB'}>
                         View Appoinments
                       </Text>
@@ -176,7 +156,7 @@ const Page = () => {
             />
           </>
         )}
-      </Card>
+
     </SafeAreaView>
   );
 };
