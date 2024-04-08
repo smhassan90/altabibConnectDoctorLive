@@ -9,7 +9,8 @@ import { AlertNotificationRoot } from 'react-native-alert-notification';
 import { colors } from '~/app/styles';
 import React from 'react';
 import LoginCard from '~/components/loginRegister/LoginCard';
-import { Text } from 'tamagui';
+import { Text, View } from 'tamagui';
+import { CusText } from '~/components/CusText';
 
 const LoginScreen = () => {
   return (
@@ -29,12 +30,14 @@ const LoginScreen = () => {
               flexGrow: 1,
             }}
             keyboardShouldPersistTaps="handled">
-            <Text color={colors.white} textAlign="center" fontFamily={'ArialB'} fontSize={32}>
-              Login
-            </Text>
-            <Text color={colors.white} textAlign="center" fontFamily={'ArialB'} fontSize={14}>
-              Get Doctors, Appointments & Medical History
-            </Text>
+            <View ai={'center'}>
+              <CusText bold color="white" size="xl">
+                Login
+              </CusText>
+              <CusText bold color="white" size="md">
+                Doctors, Appointments & Medical History
+              </CusText>
+            </View>
             <LoginCard />
           </ScrollView>
         </KeyboardAvoidingView>

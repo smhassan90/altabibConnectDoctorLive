@@ -1,11 +1,37 @@
 import { StyleSheet } from 'react-native';
 
-export const fontSizes = StyleSheet.create({
-  heading: {
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-});
+// SPACINGS
+export const spacingS = 5;
+export const spacingM = 10;
+export const spacingL = 15;
+export const spacingXL = 20;
+
+// BORDERS
+export const borderWidthS = 1;
+export const borderWidthM = 2;
+
+// BORDER RADIUS
+export const borderRadiusM = 5;
+export const borderRadiusL = 10;
+
+// FONTSWEIGHTS
+export const fontBold = 'ArialB';
+export const fontRegular = 'Arial';
+
+// ICON SIZES
+export const iconSize = 24;
+
+// PADDING/MARGINS
+export const paddingS = 5;
+export const paddingM = 10;
+export const paddingL = 15;
+
+// FONTSIZES
+export const fontS = 12;
+export const fontM = 16;
+export const fontL = 20;
+export const fontXL = 24;
+export const fontXXL = 28;
 
 export const colors = {
   primary: '#0066a1',
@@ -56,8 +82,8 @@ export const styles = StyleSheet.create({
   },
   primBtn: {
     //flex:1,
-    borderColor:"white",
-    borderWidth:1,
+    borderColor: 'white',
+    borderWidth: 1,
     borderRadius: 5,
     backgroundColor: colors.primary,
     padding: 10,

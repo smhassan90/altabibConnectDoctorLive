@@ -16,14 +16,13 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
-    Arial: require('../assets/Fonts/Arial-Regular.ttf'),
-    ArialB: require('../assets/Fonts/Arial-Bold.ttf'),
-    ArialL: require('../assets/Fonts/Arial-Light.ttf'),
+    Arial: require('@fonts/Arial-Regular.ttf'),
+    ArialB: require('@fonts/Arial-Bold.ttf'),
+    ArialL: require('@fonts/Arial-Light.ttf'),
   });
 
   const InitialLayout = () => {
     useEffect(() => {
-
       tokenCache.getToken().then((val) => {
         if (val) {
           setToken(val);
@@ -35,7 +34,6 @@ export default function RootLayout() {
         }
       });
 
-      
       if (loggedIn) {
         console.log('Local Token: ', token);
         console.log('Authenticated! Going to Home Page');

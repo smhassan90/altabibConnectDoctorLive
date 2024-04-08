@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, styles } from '~/app/styles';
+import { colors, fontM, spacingM, spacingS, styles } from '~/app/styles';
 import TitleBar from '~/components/TitleBar';
 import {
   Button,
@@ -16,23 +16,31 @@ import {
   ScrollView,
   YStack,
 } from 'tamagui';
-import { Alert, Modal, TextInput, TouchableOpacity } from 'react-native';
+import { Modal, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import dayjs from 'dayjs';
 import DateTimePicker, { DateType } from 'react-native-ui-datepicker';
 import { BlurView } from 'expo-blur';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
 import { url } from '~/env';
-import { appointmentData, clinicData } from '~/app/getToken';
 import { useRouter } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import { ALERT_TYPE, AlertNotificationRoot, Dialog } from 'react-native-alert-notification';
 import * as SecureStore from 'expo-secure-store';
+import Header from '~/components/Header';
+import { CusText } from '~/components/CusText';
 
 const Page = () => {
   const router = useRouter();
 
-  const token = SecureStore.getItem("token")
+  const token = SecureStore.getItem('token');
+  const appId = SecureStore.getItem('appId');
+  const appDate = SecureStore.getItem('appDate');
+
+  //missing params
+  const clinicId = SecureStore.getItem('clinicId');
+  const doctorId = SecureStore.getItem('doctorId');
+  const patientId = SecureStore.getItem('patientId');
 
   const [date, setDate] = useState<DateType>(dayjs());
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -40,14 +48,12 @@ const Page = () => {
 
   const follDate = dayjs(date).format('YYYY-MM-DD');
 
-  const [clinicId, setClinicId] = useState<number>();
-  const [appId, setAppId] = useState<number>();
-
   const [patientName, setPatientName] = useState('');
   const [clinicName, setclinicName] = useState('');
   const [doctorName, setDoctorName] = useState('');
   const [visitDate, setVisitDate] = useState('');
   const [tokenNumber, setTokenNumber] = useState(0);
+  const [age, setAge] = useState(0);
 
   const [clinicTotalAppointments, setClinicTotalAppointments] = useState(0);
   const [clinicLastAppointmentToken, setClinicLastAppointmentToken] = useState(0);
@@ -55,7 +61,7 @@ const Page = () => {
   const [charges, setCharges] = useState('');
   const [prescription, setPrescription] = useState('');
   const [diagnosis, setDiagnosis] = useState('');
-  const [weight, setWeight] = useState('');
+  const [weight, setWeight] = useState<number>();
 
   const [upBloodPressure, setUpBloodPressure] = useState('');
   const [lowBloodPressure, setLowBloodPressure] = useState('');
@@ -72,8 +78,11 @@ const Page = () => {
   const handleUpBpChange = (val: string) => setUpBloodPressure(val);
   const handleLowBpChange = (val: string) => setLowBloodPressure(val);
 
-  const handleWeightChange = (val: number) => setWeight(val);
-  const handleChargesChange = (val: number) => setCharges(val);
+  const handleWeightChange = (val: number) => {
+    console.log('New weight value:', val);
+    setWeight(val);
+  };
+  const handleChargesChange = (val: string) => setCharges(val);
   const handlePrescriptionChange = (val: string) => setPrescription(val);
   const handleDiagnosisChange = (val: string) => setDiagnosis(val);
   //const handleDetailChange = (val: string) => setTreatDetail(val);
@@ -110,31 +119,22 @@ const Page = () => {
   }, []);
 
   const fetchSetCheckupData = () => {
-    clinicData.getClinicId('clinicId').then((res) => {
-      if (res) {
-        setClinicId(res);
-        console.log('ClinicId:', res);
-      }
-    });
-    appointmentData.getAppointmentId('appointmentId').then((res) => {
-      if (res) {
-        setAppId(res);
-        console.log('AppointmentId:', res);
-      }
-    });
-
+    console.log('Appointment ID:', appId);
+    console.log('Appointment Date:', appDate);
     axios
-      .get(`${url}viewAppointments?token=${token}&visitDate=&clinicId=1`)
+      .get(
+        `${url}viewAppointments?token=${token}&visitDate=${appDate}&doctorId=0&clinicId=0&patientId=0&appointmentId=${appId}&followupDate`
+      )
       .then((res) => {
         console.log('Checkup Response:', JSON.stringify(res.data.data, null, 2));
 
         res.data.data.appointments.map((item: any) => {
-          setAppId(item.id);
           setPatientName(item.patientName);
           setclinicName(item.clinicName);
           setDoctorName(item.doctorName);
           setVisitDate(item.visitDate);
           setTokenNumber(item.tokenNumber);
+          setAge(item.age);
 
           console.log('Response Appointment id: ', item.id);
           console.log('Response patientName: ', item.patientName);
@@ -144,7 +144,7 @@ const Page = () => {
           console.log('Response tokenNumber: ', item.tokenNumber);
 
           console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
-          
+
           console.log('Local Appointment Id:', appId);
           console.log('Local Patient Name:', patientName);
           console.log('Local Clinic Name:', clinicName);
@@ -153,7 +153,6 @@ const Page = () => {
           console.log('Local Token Number:', tokenNumber);
           console.log('Local Followup Date:', follDate);
         });
-
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -179,9 +178,11 @@ const Page = () => {
     weight: weight,
     bloodPressure: bp,
     followupDate: follDate,
-    patientId: 2,
-    clinicId: clinicId,
-    doctorId: 2,
+    patientId: 6,
+    clinicId: 3,
+    doctorId: 1,
+    //hardcoded treatment for now
+    treatments: [{ id: 1, name: 'Crown Luting', detail: 'Detail 1' }],
   };
 
   const encodedAppObj = encodeURIComponent(JSON.stringify(appObj));
@@ -190,15 +191,18 @@ const Page = () => {
     axios
       .get(`${url}setAppointment?token=${token}&appointment=${encodedAppObj}`)
       .then((res) => {
-        //console.log('Response:', JSON.stringify(res.data, null, 2));
+        console.log('Response:', JSON.stringify(res.data, null, 2));
+
+        console.log('APPOBJ:', JSON.stringify(appObj, null, 2));
 
         Dialog.show({
           type: ALERT_TYPE.SUCCESS,
-          title: "Appointment Completed",
-          textBody: "This appointment was completed successfully",
-          button: "Close",
+          title: 'Appointment Completed',
+          textBody: 'This appointment was completed successfully',
+          button: 'Close',
           onPressButton() {
-            router.push("/(auth)/(tabs)/(clinics)");
+            // router.push('/(auth)/(tabs)/(clinics)');
+            Dialog.hide();
           },
         });
 
@@ -211,254 +215,231 @@ const Page = () => {
       })
       .catch((error) => {
         console.error('Error updating appointment:', error);
+        console.log('APPOBJ:', JSON.stringify(appObj, null, 2));
       });
   };
 
   return (
     <AlertNotificationRoot>
-      <SafeAreaView style={styles.safeArea}>
-        <TitleBar title="Check Up" />
-        <Card gap={10} padded backgroundColor={colors.white}>
-          {/* Patient Details */}
+      <View flex={1} backgroundColor={colors.primary}>
+        <Header>
+          <TitleBar title="Checkup" />
+        </Header>
+        <YStack flex={1} gap={spacingM} padding={spacingM}>
+          <Card gap={spacingM} padded backgroundColor={colors.white}>
+            {/* Patient Details */}
 
-          <XStack gap={5}>
-            <Text fontFamily={'ArialB'} fontSize={20} color={colors.primary}>
-              Name:
-            </Text>
-            <Text fontFamily={'ArialB'} fontSize={20} color={colors.yellow}>
-              {patientName}
-            </Text>
-          </XStack>
-          <XStack gap={5}>
-            <Text fontFamily={'ArialB'} fontSize={20} color={colors.primary}>
-              Age:
-            </Text>
-            <Text fontFamily={'ArialB'} fontSize={20} color={colors.yellow}>
-              null
-            </Text>
-          </XStack>
-          <XStack gap={5}>
-            <Text fontFamily={'ArialB'} fontSize={20} color={colors.primary}>
-              Visit Date:
-            </Text>
-            <Text fontFamily={'ArialB'} fontSize={20} color={colors.yellow}>
-              {visitDate}
-            </Text>
-          </XStack>
-          <XStack gap={5}>
-            <Text fontFamily={'ArialB'} fontSize={20} color={colors.primary}>
-              Appointment Token:
-            </Text>
-            <Text fontFamily={'ArialB'} fontSize={20} color={colors.yellow}>
-              {tokenNumber}
-            </Text>
-          </XStack>
-        </Card>
+            <XStack gap={spacingS}>
+              <CusText bold size="md" color="primary">
+                Name:
+              </CusText>
+              <CusText bold size="md" color="yellow">
+                {patientName}
+              </CusText>
+            </XStack>
+            <XStack gap={spacingS}>
+              <CusText bold size="md" color="primary">
+                Age:
+              </CusText>
+              <CusText bold size="md" color="yellow">
+                {age && age.toString() + ' years'}
+              </CusText>
+            </XStack>
+            <XStack gap={spacingS}>
+              <CusText bold size="md" color="primary">
+                Visit Date:
+              </CusText>
+              <CusText bold size="md" color="yellow">
+                {visitDate && dayjs(visitDate).format('D/M/YYYY')}
+              </CusText>
+            </XStack>
+            <XStack gap={spacingS}>
+              <CusText bold size="md" color="primary">
+                Appointment Token:
+              </CusText>
+              <CusText bold size="md" color="yellow">
+                {tokenNumber}
+              </CusText>
+            </XStack>
+          </Card>
 
-        {/* Checkup Card */}
+          {/* Checkup Card */}
 
-        <Card padded flex={1} backgroundColor={colors.white}>
-          {/* Vital Signs */}
+          <Card padded flex={1} backgroundColor={colors.white}>
+            {/* Vital Signs */}
 
-          <ScrollView style={{ flex: 1 }}>
-            <YStack gap={10}>
-              <XStack alignItems="center" borderRadius={5} backgroundColor={'white'} gap={5}>
-                <TextInput
-                  value={upBloodPressure}
-                  onChangeText={handleUpBpChange}
-                  placeholderTextColor={colors.primary}
-                  placeholder="Upper BP"
-                  style={{
-                    fontFamily: 'ArialB',
-                    flex: 1,
-                    borderBottomColor: colors.yellow,
-                    padding: 0,
-                    borderBottomWidth: 2,
-                  }}></TextInput>
-                <TextInput
-                  onChangeText={handleLowBpChange}
-                  placeholderTextColor={colors.primary}
-                  placeholder="Lower BP"
-                  style={{
-                    fontFamily: 'ArialB',
-                    flex: 1,
-                    borderBottomColor: colors.yellow,
-                    padding: 0,
-                    borderBottomWidth: 2,
-                  }}></TextInput>
-              </XStack>
-
-              {/* Weight */}
-
-              <XStack alignItems="center" borderRadius={5} backgroundColor={'white'} gap={5}>
-                <TextInput
-                onChangeText={handleWeightChange}
-                  placeholder="Weight"
-                  placeholderTextColor={colors.primary}
-                  style={{
-                    fontFamily: 'ArialB',
-                    flex: 1,
-                    borderBottomColor: colors.yellow,
-                    padding: 0,
-                    borderBottomWidth: 2,
-                  }}></TextInput>
-              </XStack>
-
-              {/* Charges */}
-
-              <XStack alignItems="center" borderRadius={5} backgroundColor={'white'} gap={5}>
-                <TextInput
-                  onChangeText={handleChargesChange}
-                  placeholder="Charges"
-                  placeholderTextColor={colors.primary}
-                  style={{
-                    flex: 1,
-                    fontFamily: 'ArialB',
-                    borderBottomColor: colors.yellow,
-                    padding: 0,
-                    borderBottomWidth: 2,
-                  }}></TextInput>
-              </XStack>
-
-              {/* Prescription */}
-
-              <XStack alignItems="center" borderRadius={5} backgroundColor={'white'} gap={5}>
-                <TextInput
-                onChangeText={handlePrescriptionChange}
-                  placeholder="Prescription"
-                  placeholderTextColor={colors.primary}
-                  style={{
-                    flex: 1,
-                    fontFamily: 'ArialB',
-                    borderBottomColor: colors.yellow,
-                    padding: 0,
-                    borderBottomWidth: 2,
-                  }}></TextInput>
-              </XStack>
-
-              {/* Diagnosis */}
-
-              <XStack alignItems="center" borderRadius={5} backgroundColor={'white'} gap={5}>
-                <TextInput
-                  onChangeText={handleDiagnosisChange}
-                  placeholder="Diagnosis"
-                  placeholderTextColor={colors.primary}
-                  style={{
-                    flex: 1,
-                    fontFamily: 'ArialB',
-                    borderBottomColor: colors.yellow,
-                    padding: 0,
-                    borderBottomWidth: 2,
-                  }}></TextInput>
-              </XStack>
-
-              {/* Treatment Selector */}
-
-              <Card
-                gap={10}
-                borderWidth={2}
-                borderColor={colors.yellow}
-                borderRadius={10}
-                unstyled
-                padded>
-                <Text>Select Treatment</Text>
-                <View gap={10}>
-                  <Picker
-                    mode="dropdown"
-                    selectedValue={selectedTreatment}
-                    onValueChange={(itemValue: any, itemIndex: any) =>
-                      setSelectedTreatment(itemValue)
-                    }>
-                    {selectedTreatment ? null : (
-                      <Picker.Item label="Select a treatment" value={null} />
-                    )}
-                    {dropdownItems
-                      .filter((item) => item !== selectedTreatment)
-                      .map((item, index) => (
-                        <Picker.Item key={index} label={item.name} value={item} />
-                      ))}
-                  </Picker>
-
+            <ScrollView style={{ flex: 1 }}>
+              <YStack gap={spacingM}>
+                <XStack
+                  alignItems="center"
+                  borderRadius={5}
+                  backgroundColor={'white'}
+                  gap={spacingS}>
                   <TextInput
-                    placeholder="Detail"
+                    value={upBloodPressure}
+                    onChangeText={handleUpBpChange}
                     placeholderTextColor={colors.primary}
-                    style={{
-                      fontFamily: 'ArialB',
-                      flex: 1,
-                      borderBottomColor: colors.yellow,
-                      padding: 0,
-                      borderBottomWidth: 2,
-                    }}></TextInput>
+                    placeholder="Upper BP"
+                    keyboardType="numeric"
+                    style={styl.input}></TextInput>
+                  <TextInput
+                    keyboardType="numeric"
+                    onChangeText={handleLowBpChange}
+                    placeholderTextColor={colors.primary}
+                    placeholder="Lower BP"
+                    style={styl.input}></TextInput>
+                </XStack>
 
-                  <Button
-                    backgroundColor={colors.primary}
-                    fontFamily={'ArialB'}
-                    onPress={handleAddTreatment}>
-                    Add Treatment
+                {/* Weight */}
+
+                <XStack
+                  alignItems="center"
+                  borderRadius={5}
+                  backgroundColor={'white'}
+                  gap={spacingS}>
+                  <TextInput
+                    keyboardType="numeric"
+                    onChangeText={handleWeightChange}
+                    placeholder="Weight"
+                    placeholderTextColor={colors.primary}
+                    style={styl.input}
+                  />
+                </XStack>
+
+                {/* Charges */}
+
+                <XStack
+                  alignItems="center"
+                  borderRadius={5}
+                  backgroundColor={'white'}
+                  gap={spacingS}>
+                  <TextInput
+                    keyboardType="numeric"
+                    onChangeText={handleChargesChange}
+                    placeholder="Charges"
+                    placeholderTextColor={colors.primary}
+                    style={styl.input}></TextInput>
+                </XStack>
+
+                {/* Prescription */}
+
+                <XStack
+                  alignItems="center"
+                  borderRadius={5}
+                  backgroundColor={'white'}
+                  gap={spacingS}>
+                  <TextInput
+                    onChangeText={handlePrescriptionChange}
+                    placeholder="Prescription"
+                    placeholderTextColor={colors.primary}
+                    style={styl.input}></TextInput>
+                </XStack>
+
+                {/* Diagnosis */}
+
+                <XStack
+                  alignItems="center"
+                  borderRadius={5}
+                  backgroundColor={'white'}
+                  gap={spacingS}>
+                  <TextInput
+                    onChangeText={handleDiagnosisChange}
+                    placeholder="Diagnosis"
+                    placeholderTextColor={colors.primary}
+                    style={styl.input}></TextInput>
+                </XStack>
+
+                {/* Treatment Selector */}
+
+                <Card
+                  gap={spacingM}
+                  borderWidth={2}
+                  borderColor={colors.yellow}
+                  borderRadius={10}
+                  unstyled
+                  padded>
+                  <CusText bold size="md" color="primary">
+                    Select Treatment
+                  </CusText>
+                  <View gap={spacingM}>
+                    <Picker
+                      mode="dropdown"
+                      selectedValue={selectedTreatment}
+                      onValueChange={(itemValue: any, itemIndex: any) =>
+                        setSelectedTreatment(itemValue)
+                      }>
+                      {selectedTreatment ? null : (
+                        <Picker.Item label="Select a treatment" value={null} />
+                      )}
+                      {dropdownItems
+                        .filter((item) => item !== selectedTreatment)
+                        .map((item, index) => (
+                          <Picker.Item key={index} label={item.name} value={item} />
+                        ))}
+                    </Picker>
+
+                    <TextInput
+                      placeholder="Detail"
+                      placeholderTextColor={colors.primary}
+                      style={styl.input}></TextInput>
+
+                    <Button
+                      backgroundColor={colors.primary}
+                      fontFamily={'ArialB'}
+                      onPress={handleAddTreatment}>
+                      Add Treatment
+                    </Button>
+                    {treatments.map((treatment, index) => (
+                      <Card
+                        gap={spacingM}
+                        borderWidth={2}
+                        borderColor={colors.yellow}
+                        borderRadius={10}
+                        unstyled
+                        padded
+                        flexDirection="row"
+                        justifyContent="space-around"
+                        alignItems="center"
+                        key={index}>
+                        <Text>{treatment.name}</Text>
+                        <FontAwesome name="check-circle" size={24} color={colors.primary} />
+                      </Card>
+                    ))}
+                  </View>
+                </Card>
+
+                {/* Choose followup Date */}
+
+                <CusText bold size="md" color="primary">
+                  Choose Follow-up Date:
+                </CusText>
+                <Button onPress={() => setIsModalVisible(true)} backgroundColor={colors.yellow}>
+                  <ButtonText fontFamily={'ArialB'}>{currDate}</ButtonText>
+                </Button>
+
+                {/*  Checkbox completed */}
+
+                <CheckboxWithLabel size="$4" defaultChecked={checked} />
+
+                {/* Checkup Completed */}
+
+                <XStack gap={spacingM}>
+                  <Button flex={1} backgroundColor={colors.yellow}>
+                    <ButtonText
+                      onPress={() => router.push('/patientHistory')}
+                      fontFamily={'ArialB'}>
+                      Patient History
+                    </ButtonText>
                   </Button>
-                  {treatments.map((treatment, index) => (
-                    <Card
-                      gap={10}
-                      borderWidth={2}
-                      borderColor={colors.yellow}
-                      borderRadius={10}
-                      unstyled
-                      padded
-                      flexDirection="row"
-                      justifyContent="space-around"
-                      alignItems="center"
-                      key={index}>
-                      <Text>{treatment.name}</Text>
-                      <FontAwesome name="check-circle" size={24} color={colors.primary} />
-                    </Card>
-                  ))}
-                </View>
-              </Card>
-
-              {/* Detail */}
-
-              {/* <XStack alignItems="center" borderRadius={5} backgroundColor={'white'} gap={5}>
-                <TextInput
-                  placeholder="Detail"
-                  placeholderTextColor={colors.primary}
-                  style={{
-                    fontFamily: 'ArialB',
-                    flex: 1,
-                    borderBottomColor: colors.yellow,
-                    padding: 0,
-                    borderBottomWidth: 2,
-                  }}></TextInput>
-              </XStack> */}
-
-              {/* Choose followup Date */}
-
-              <Text fontFamily={'ArialB'} color={colors.primary} fontSize={18}>
-                Choose Follow-up Date:
-              </Text>
-              <Button onPress={() => setIsModalVisible(true)} backgroundColor={colors.yellow}>
-                <ButtonText fontFamily={'ArialB'}>{currDate}</ButtonText>
-              </Button>
-
-              {/*  Checkbox completed */}
-
-              <CheckboxWithLabel size="$4" defaultChecked={checked} />
-
-              {/* Checkup Completed */}
-
-              <XStack gap={10}>
-                <Button flex={1} backgroundColor={colors.yellow}>
-                  <ButtonText onPress={() => router.push('/patientHistory')} fontFamily={'ArialB'}>
-                    Patient History
-                  </ButtonText>
-                </Button>
-                <Button onPress={updateAppointment} flex={1} backgroundColor={colors.primary}>
-                  <ButtonText fontFamily={'ArialB'}>Submit</ButtonText>
-                </Button>
-              </XStack>
-            </YStack>
-          </ScrollView>
-        </Card>
-      </SafeAreaView>
+                  <Button onPress={updateAppointment} flex={1} backgroundColor={colors.primary}>
+                    <ButtonText fontFamily={'ArialB'}>Submit</ButtonText>
+                  </Button>
+                </XStack>
+              </YStack>
+            </ScrollView>
+          </Card>
+        </YStack>
+      </View>
       <Modal
         transparent={true}
         visible={isModalVisible}
@@ -553,3 +534,13 @@ function CheckboxWithLabel({
   );
 }
 export default Page;
+
+const styl = StyleSheet.create({
+  input: {
+    fontFamily: 'ArialB',
+    flex: 1,
+    borderBottomColor: colors.yellow,
+    padding: 0,
+    borderBottomWidth: 2,
+  },
+});

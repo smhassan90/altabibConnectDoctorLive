@@ -1,57 +1,105 @@
-import { FlatList, View } from 'react-native';
+import { Dimensions, FlatList, Platform } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Card, Text, XStack, YStack } from 'tamagui';
+import { Card, Text, View, XStack, YStack } from 'tamagui';
 import axios from 'axios';
-import { colors, styles } from '~/app/styles';
+import {
+  borderRadiusM,
+  colors,
+  fontXL,
+  paddingL,
+  paddingM,
+  paddingS,
+  spacingM,
+  spacingS,
+  styles,
+} from '~/app/styles';
 import { url } from '~/env';
 import TitleBar from '~/components/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import Spinner from '~/components/Spinner';
-import { TouchableOpacity } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { CusText } from '~/components/CusText';
+import { CusBtn } from '~/components/CusBtn';
+import { RefreshControl } from 'react-native-gesture-handler';
+import { HeartLoader } from '~/components/CusAnimations';
+import constants from 'expo-constants';
+import Header from '~/components/Header';
+
+const loaderWidth = Dimensions.get('window').width;
+const loaderHeight = Dimensions.get('window').height;
+const paddTop = constants.statusBarHeight;
 
 const Page = () => {
   const [clinicArr, setclinicArr] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = SecureStore.getItem('token');
-  //var totalApps = 0;
+  const [refresh, setRefresh] = useState(false);
+  var totalApps = 0;
   const [totalAppointments, setTotalAppointment] = useState<number>();
 
-  const [pendingApps, setPendingApps] = useState<number>();
-  const [successApps, setSuccessApps] = useState<number>();
+  const [successApps, setSuccessApps] = useState<any>([]);
+  const [pendingApps, setPendingApps] = useState<any>([]);
 
   //USE YOUR OWN URL!!
   useEffect(() => {
+    if (!refresh) {
+      console.log('Token RES:', token);
+      axios
+        .get(`${url}getClinics?token=${token}`)
+        .then((res) => {
+          console.log('Response Clinic Data:', JSON.stringify(res.data.data, null, 2));
+          SecureStore.setItem('doctorId', res.data.data.id.toString());
+
+          setclinicArr(res.data.data.doctorClinicDALS);
+          setLoading(false);
+
+          console.log('Clinic Array:', JSON.stringify(clinicArr, null, 2));
+
+          clinicArr.map((item: any) => {
+            const clinicID = item.clinic.id;
+
+            console.log('Clinic ID:', item.clinic.id);
+            axios
+              .get(`${url}viewAppointments?token=${token}&visitDate=&clinicId=${clinicID}`)
+              .then((res) => {
+                console.log(
+                  'Response ViewAppointment Data:',
+                  JSON.stringify(res.data.data, null, 2)
+                );
+
+                const successAppsArray: any[] = [];
+                const pendingAppsArray: any[] = [];
+
+                res.data.data.appointments.forEach((item: any) => {
+                  if (item.status === 1) {
+                    // Replace existing items in successApps array with new items
+                    successAppsArray.push(item);
+                  } else {
+                    // Replace existing items in pendingApps array with new items
+                    pendingAppsArray.push(item);
+                  }
+                });
+
+                setSuccessApps(successAppsArray);
+                setPendingApps(pendingAppsArray);
+
+                console.log('Total Appointments today:', successApps.length);
+                console.log('Pending Appointments today:', pendingApps.length);
+              })
+              .catch((error) => {
+                console.log('Error fetching Number App data:', error);
+              });
+          });
+        })
+        .catch((error) => {
+          console.log('Error fetching data:', error);
+        });
+    }
+    setRefresh(false);
+
     // Axios GET request to fetch doctors data
-    console.log('Token RES:', token);
-    axios
-      .get(`${url}getClinics?token=${token}`)
-      .then((res) => {
-        console.log('Response Clinic Data:', JSON.stringify(res.data.data, null, 2));
-        
-        SecureStore.setItem("doctorId",res.data.data.id.toString())
-
-
-        setclinicArr(res.data.data.doctorClinicDALS);
-        setLoading(false);
-
-        // res.data.data.doctorClinicDALS.map((item: any) => {
-        //   const clinicID = item.clinic.id;
-        //   //console.log('Clinic ID:', item.clinic.id);
-        //   axios
-        //     .get(`${url}viewAppointments?token=${token}&visitDate=&clinicId=${clinicID}`)
-        //     .then((res) => {
-        //       //console.log('Response ViewAppointment Data:', JSON.stringify(res.data.data, null, 2));
-        //       setTotalAppointment(res.data.data.appointments.length);
-        //       //console.log('Total Overall Appointments:', totalAppointments);
-        //     });
-        // });
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
+  }, [refresh]);
 
   const handleViewAppointment = (clinicId: string, dateOfApp: string) => {
     SecureStore.setItem('clinicId', clinicId);
@@ -60,104 +108,116 @@ const Page = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <TitleBar />
-      <Card padding={10} gap={10} backgroundColor={colors.lightGray} alignItems="center">
-        <Text fontFamily={'ArialB'} color={colors.linkBlue} fontSize={18}>
-          Total Appointments today: <Text color={colors.green}>{totalAppointments}</Text>
-        </Text>
-        <Text fontFamily={'ArialB'} color={colors.linkBlue} fontSize={18}>
-          Completed Appointments today: <Text color={colors.green}>{successApps}</Text>
-        </Text>
-        <Text fontFamily={'ArialB'} color={colors.linkBlue} fontSize={18}>
-          Pending Appointments today: <Text color={colors.yellow}>{pendingApps}</Text>
-        </Text>
-      </Card>
+    <View flex={1} backgroundColor={colors.primary}>
+      <Header>
+        <TitleBar title="" />
+      </Header>
+      <YStack flex={1} paddingTop={paddingM} paddingHorizontal={spacingM}>
+        <YStack
+          borderRadius={borderRadiusM}
+          padding={paddingM}
+          gap={spacingM}
+          backgroundColor={colors.lightGray}
+          alignItems="center">
+          <CusText bold size="lg" color="primary">
+            Total Appointments today: {successApps.length}
+          </CusText>
+          <CusText bold size="lg" color="primary">
+            Pending Appointments today: {pendingApps.length}
+          </CusText>
+        </YStack>
         {loading ? (
-          <Spinner title="Loading your Clinics" />
+          <View
+            gap={spacingS}
+            alignItems="center"
+            position="absolute"
+            alignSelf="center"
+            height={loaderHeight}
+            //width={loaderWidth}
+            jc={'center'}>
+            <CusText color="white" bold size="lg">
+              Loading Clinics
+            </CusText>
+            <HeartLoader />
+          </View>
         ) : (
           <>
-            <Text fontFamily={'ArialB'} color={colors.white} alignSelf="center" fontSize={24}>
+            <Text fontFamily={'ArialB'} color={colors.white} alignSelf="center" fontSize={fontXL}>
               Clinic List
             </Text>
             <FlatList
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refresh}
+                  colors={[colors.yellow]}
+                  tintColor={colors.white}
+                  onRefresh={() => {
+                    setRefresh(true);
+                  }}
+                />
+              }
               refreshing={true}
               horizontal={false}
               decelerationRate="normal"
               data={clinicArr}
-              //keyExtractor={(item: any) => item.id.toString()}
+              keyExtractor={(item: any) => item.id.toString()}
               renderItem={({ item }) => (
-                <View style={{ paddingBottom: 15, gap: 5 }}>
+                <View paddingBottom={paddingL} gap={spacingS}>
                   {/* Doctor's information */}
                   <Card
-                    style={{
-                      borderWidth: 1,
-                      borderColor: colors.border,
-                      padding: 10,
-                      paddingVertical: 15,
-                      borderRadius: 10,
-                      backgroundColor: colors.white,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }}>
-                    <View style={{ gap: 10 }}>
+                    padding={paddingM}
+                    borderRadius={borderRadiusM}
+                    backgroundColor={colors.white}
+                    gap={spacingM}>
+                    <View gap={spacingM} padding={paddingM}>
                       <XStack gap={5}>
-                        <Text fontFamily={'ArialB'} fontSize={'$6'} color={colors.yellow}>
-                          Clinic ID:
-                        </Text>
-                        <Text fontFamily={'ArialB'} fontSize={'$6'} color={colors.linkBlue}>
-                          {item.clinic.id}
-                        </Text>
-                      </XStack>
-                      <XStack gap={5}>
-                        <Text fontFamily={'ArialB'} fontSize={'$6'} color={colors.yellow}>
+                        <CusText bold size="md" color="yellow">
                           Clinic Name:
-                        </Text>
-                        <Text fontFamily={'ArialB'} fontSize={'$6'} color={colors.linkBlue}>
+                        </CusText>
+                        <CusText bold size="md" color="primary">
                           {item.clinic.name}
-                        </Text>
+                        </CusText>
                       </XStack>
-                      <XStack gap={5}>
-                        <Text fontFamily={'ArialB'} fontSize={'$6'} color={colors.yellow}>
-                          Clinic Timings:
-                        </Text>
-                        <Text fontFamily={'ArialB'} fontSize={'$6'} color={colors.linkBlue}>
+                      <XStack gap={spacingS}>
+                        <CusText bold size="md" color="yellow">
+                          Clinic Timing:
+                        </CusText>
+                        <CusText bold size="md" color="primary">
                           {item.startTime} - {item.endTime}
-                        </Text>
+                        </CusText>
                       </XStack>
                       <XStack gap={5}>
-                        <Text fontFamily={'ArialB'} fontSize={'$6'} color={colors.yellow}>
+                        <CusText bold size="md" color="yellow">
                           Charges:
-                        </Text>
-                        <Text fontFamily={'ArialB'} fontSize={'$6'} color={colors.linkBlue}>
+                        </CusText>
+                        <CusText bold size="md" color="primary">
                           {item.charges}
-                        </Text>
+                        </CusText>
                       </XStack>
                     </View>
+                    <XStack gap={5}>
+                      {/* <CusBtn color={colors.yellow} textColor="white">
+                        Get Token
+                      </CusBtn> */}
+                      <CusBtn
+                        onPress={() =>
+                          handleViewAppointment(item.clinic.id.toString(), '2024-03-04')
+                        }
+                        color={colors.yellow}
+                        textColor="white">
+                        View Appoinments
+                      </CusBtn>
+                    </XStack>
                   </Card>
                   {/* Check Appointment Button */}
-                  <XStack gap={5}>
-                    <TouchableOpacity activeOpacity={0.6} style={[styles.primBtn,{flex:1}]}>
-                      <Text color={colors.white} fontSize={13} fontFamily={'ArialB'}>
-                        Get Token
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      activeOpacity={0.6}
-                      onPress={() => handleViewAppointment(item.clinic.id.toString(), '2024-03-04')}
-                      style={[styles.secBtn,{flex:1}]}>
-                      <Text color={colors.white} fontSize={13} fontFamily={'ArialB'}>
-                        View Appoinments
-                      </Text>
-                    </TouchableOpacity>
-                  </XStack>
                 </View>
               )}
             />
           </>
         )}
-
-    </SafeAreaView>
+      </YStack>
+    </View>
   );
 };
 export default Page;
