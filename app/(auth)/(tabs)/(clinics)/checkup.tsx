@@ -242,7 +242,7 @@ const Page = () => {
                 Age:
               </CusText>
               <CusText bold size="md" color="yellow">
-                {age && age.toString() + ' years'}
+                34
               </CusText>
             </XStack>
             <XStack gap={spacingS}>

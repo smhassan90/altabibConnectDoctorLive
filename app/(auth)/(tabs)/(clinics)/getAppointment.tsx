@@ -96,11 +96,11 @@ export default function Page() {
     doctorId: number,
     clinicId: number
   ) => {
-    SecureStore.setItem('appDate', date);
-    SecureStore.setItem('appId', appId.toString());
-    SecureStore.setItem('clinicId', appId.toString());
-    SecureStore.setItem('patientId', pId.toString());
-    SecureStore.setItem('doctorId', doctorId.toString());
+    // SecureStore.setItem('appDate', date);
+    // SecureStore.setItem('appId', appId.toString());
+    // SecureStore.setItem('clinicId', appId.toString());
+    // SecureStore.setItem('patientId', pId.toString());
+    // SecureStore.setItem('doctorId', doctorId.toString());
     router.push('/checkup');
   };
 

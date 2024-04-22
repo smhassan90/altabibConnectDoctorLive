@@ -9,6 +9,7 @@ import {
   paddingL,
   paddingM,
   paddingS,
+  spacingL,
   spacingM,
   spacingS,
   styles,
@@ -120,10 +121,10 @@ const Page = () => {
           backgroundColor={colors.lightGray}
           alignItems="center">
           <CusText bold size="lg" color="primary">
-            Total Appointments today: {successApps.length}
+            Total Appointments today: 21
           </CusText>
           <CusText bold size="lg" color="primary">
-            Pending Appointments today: {pendingApps.length}
+            Pending Appointments today: 18
           </CusText>
         </YStack>
         {loading ? (
@@ -141,10 +142,7 @@ const Page = () => {
             <HeartLoader />
           </View>
         ) : (
-          <>
-            <Text fontFamily={'ArialB'} color={colors.white} alignSelf="center" fontSize={fontXL}>
-              Clinic List
-            </Text>
+          <YStack flex={1} paddingTop={spacingL}>
             <FlatList
               showsVerticalScrollIndicator={false}
               refreshControl={
@@ -214,7 +212,7 @@ const Page = () => {
                 </View>
               )}
             />
-          </>
+          </YStack>
         )}
       </YStack>
     </View>
