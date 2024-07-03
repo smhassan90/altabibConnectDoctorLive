@@ -1,1 +1,1 @@
-export const url = "http://192.168.100.10:8083/altabibconnect/"
+export const url = 'https://tabibportal.azurewebsites.net/tabib/';

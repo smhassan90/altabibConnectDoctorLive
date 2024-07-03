@@ -26,10 +26,10 @@ const DrawerLayout = () => {
   const responseListener = useRef();
 
   useEffect(() => {
-    const FCMtoken = expoPushToken.replace('ExponentPushToken[', '').replace(']', '');
-    axios.get(`${url}updateFCMToken?token=${TOKEN}&fcm=${FCMtoken}`);
-
     registerForPushNotificationsAsync().then((expoToken) => setExpoPushToken(expoToken));
+    axios.get(`${url}updateFCMToken?token=${TOKEN}&fcm=${expoPushToken}`);
+
+    console.log('PUSHINGGG:', expoPushToken);
 
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       setNotification(notification);
@@ -101,12 +101,8 @@ async function registerForPushNotificationsAsync() {
     }
     // Learn more about projectId:
     // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-    token = (
-      await Notifications.getExpoPushTokenAsync({
-        projectId: 'a8c49790-adb1-4f30-aec5-2cb6d2f2ab88',
-      })
-    ).data;
-    console.log(token);
+    token = (await Notifications.getDevicePushTokenAsync()).data;
+    console.log('PUSH NOTI TOKEN:', token);
   } else {
     alert('Must use physical device for Push Notifications');
   }

@@ -26,21 +26,24 @@ import { RefreshControl } from 'react-native-gesture-handler';
 import { HeartLoader } from '~/components/CusAnimations';
 import constants from 'expo-constants';
 import Header from '~/components/Header';
+import dayjs from 'dayjs';
 
 const loaderWidth = Dimensions.get('window').width;
 const loaderHeight = Dimensions.get('window').height;
 const paddTop = constants.statusBarHeight;
 
 const Page = () => {
+  const date = dayjs().format('YYYY-MM-DD');
   const [clinicArr, setclinicArr] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = SecureStore.getItem('token');
   const [refresh, setRefresh] = useState(false);
-  var totalApps = 0;
-  const [totalAppointments, setTotalAppointment] = useState<number>();
 
   const [successApps, setSuccessApps] = useState<any>([]);
   const [pendingApps, setPendingApps] = useState<any>([]);
+
+  const [totalSuccessApps, setTotalSuccessApps] = useState(0);
+  const [totalPendingApps, setTotalPendingApps] = useState(0);
 
   //USE YOUR OWN URL!!
   useEffect(() => {
@@ -49,20 +52,22 @@ const Page = () => {
       axios
         .get(`${url}getClinics?token=${token}`)
         .then((res) => {
-          console.log('Response Clinic Data:', JSON.stringify(res.data.data, null, 2));
+          //console.log('Response Clinic Data:', JSON.stringify(res.data.data, null, 2));
           SecureStore.setItem('doctorId', res.data.data.id.toString());
 
           setclinicArr(res.data.data.doctorClinicDALS);
           setLoading(false);
 
-          console.log('Clinic Array:', JSON.stringify(clinicArr, null, 2));
+          //console.log('Clinic Array:', JSON.stringify(clinicArr, null, 2));
 
           clinicArr.map((item: any) => {
             const clinicID = item.clinic.id;
 
             console.log('Clinic ID:', item.clinic.id);
             axios
-              .get(`${url}viewAppointments?token=${token}&visitDate=&clinicId=${clinicID}`)
+              .get(
+                `${url}viewAppointments?token=${token}&visitDate=${date}&clinicId=${clinicID}&patientId=0&doctorId=0&appointmentId=0&followupDate=`
+              )
               .then((res) => {
                 console.log(
                   'Response ViewAppointment Data:',
@@ -84,9 +89,11 @@ const Page = () => {
 
                 setSuccessApps(successAppsArray);
                 setPendingApps(pendingAppsArray);
+                setTotalSuccessApps(successAppsArray.length + pendingAppsArray.length);
+                setTotalPendingApps(pendingAppsArray.length);
 
-                console.log('Total Appointments today:', successApps.length);
-                console.log('Pending Appointments today:', pendingApps.length);
+                console.log('Total Appointments today:', successAppsArray.length);
+                console.log('Pending Appointments today:', pendingAppsArray.length);
               })
               .catch((error) => {
                 console.log('Error fetching Number App data:', error);
@@ -121,10 +128,10 @@ const Page = () => {
           backgroundColor={colors.lightGray}
           alignItems="center">
           <CusText bold size="lg" color="primary">
-            Total Appointments today: 21
+            Total Appointments today: {totalSuccessApps}
           </CusText>
           <CusText bold size="lg" color="primary">
-            Pending Appointments today: 18
+            Pending Appointments today: {totalPendingApps}
           </CusText>
         </YStack>
         {loading ? (
