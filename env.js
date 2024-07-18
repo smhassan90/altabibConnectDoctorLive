@@ -1,1 +1,1 @@
-export const url = 'https://tabibportal.azurewebsites.net/tabib/';
+export const url = 'https://tabib.azurewebsites.net/';
