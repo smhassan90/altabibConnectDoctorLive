@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, fontM, spacingM, spacingS, styles } from '~/app/styles';
+import { colors, spacingM, spacingS } from '~/app/styles';
 import TitleBar from '~/components/TitleBar';
 import {
   Button,
@@ -29,34 +28,22 @@ import { ALERT_TYPE, AlertNotificationRoot, Dialog } from 'react-native-alert-no
 import * as SecureStore from 'expo-secure-store';
 import Header from '~/components/Header';
 import { CusText } from '~/components/CusText';
+import { useSelector } from 'react-redux';
 
 const Page = () => {
   const router = useRouter();
 
   const token = SecureStore.getItem('token');
-  const appId = SecureStore.getItem('appId');
-  const appDate = SecureStore.getItem('appDate');
 
-  //missing params
-  const clinicId = SecureStore.getItem('clinicId');
-  const doctorId = SecureStore.getItem('doctorId');
-  const patientId = SecureStore.getItem('patientId');
+  const selectedPatient = useSelector((state: any) => state.selectedPatient);
+
+  console.log('Selected Patient for checkup:', JSON.stringify(selectedPatient, null, 2));
 
   const [date, setDate] = useState<DateType>(dayjs());
   const [isModalVisible, setIsModalVisible] = useState(false);
   const currDate = date ? dayjs(date).format('YYYY-MM-DD') : 'Choose Follow-up Date';
 
   const follDate = dayjs(date).format('YYYY-MM-DD');
-
-  const [patientName, setPatientName] = useState('');
-  const [clinicName, setclinicName] = useState('');
-  const [doctorName, setDoctorName] = useState('');
-  const [visitDate, setVisitDate] = useState('');
-  const [tokenNumber, setTokenNumber] = useState(0);
-  const [age, setAge] = useState(0);
-
-  const [clinicTotalAppointments, setClinicTotalAppointments] = useState(0);
-  const [clinicLastAppointmentToken, setClinicLastAppointmentToken] = useState(0);
 
   const [charges, setCharges] = useState('');
   const [prescription, setPrescription] = useState('');
@@ -72,7 +59,6 @@ const Page = () => {
   const [checked, setChecked] = useState(false);
 
   const [selectedTreatment, setSelectedTreatment] = useState(null);
-  const [details, setDetails] = useState('');
   const [treatments, setTreatments] = useState([]);
 
   const handleUpBpChange = (val: string) => setUpBloodPressure(val);
@@ -85,15 +71,29 @@ const Page = () => {
   const handleChargesChange = (val: string) => setCharges(val);
   const handlePrescriptionChange = (val: string) => setPrescription(val);
   const handleDiagnosisChange = (val: string) => setDiagnosis(val);
-  //const handleDetailChange = (val: string) => setTreatDetail(val);
-  const handleFollowupDateChange = (val: string) => setFollowupDate(val);
-  const handelCheckBox = (val: boolean) => setChecked(!checked);
 
   const dropdownItems = [
-    { id: 1, name: 'Crown Luting', detail: 'Detail 1' },
-    { id: 2, name: 'Dental Implant', detail: 'Detail 2' },
-    { id: 3, name: 'Whitening Treatment', detail: 'Detail 3' },
-    // Add more items as needed
+    {
+      id: 4,
+      name: 'Root Canal',
+      charges: 0,
+      doctorType: 3,
+      updateDate: '2022-09-01 09:56:08',
+    },
+    {
+      id: 5,
+      name: 'Consultation',
+      charges: 0,
+      doctorType: 3,
+      updateDate: '2022-09-01 09:56:08',
+    },
+    {
+      id: 6,
+      name: 'X-RAY',
+      charges: 0,
+      doctorType: 3,
+      updateDate: '2022-09-01 09:56:08',
+    },
   ];
 
   const handleAddTreatment = () => {
@@ -113,74 +113,25 @@ const Page = () => {
     }
   }, [dropdownItems, selectedTreatment]);
 
-  useEffect(() => {
-    // Axios GET request to fetch doctors data
-    fetchSetCheckupData();
-  }, []);
-
-  const fetchSetCheckupData = () => {
-    console.log('Appointment ID:', appId);
-    console.log('Appointment Date:', appDate);
-    axios
-      .get(
-        `${url}viewAppointments?token=${token}&visitDate=${appDate}&doctorId=0&clinicId=0&patientId=0&appointmentId=${appId}&followupDate`
-      )
-      .then((res) => {
-        console.log('Checkup Response:', JSON.stringify(res.data.data, null, 2));
-
-        res.data.data.appointments.map((item: any) => {
-          setPatientName(item.patientName);
-          setclinicName(item.clinicName);
-          setDoctorName(item.doctorName);
-          setVisitDate(item.visitDate);
-          setTokenNumber(item.tokenNumber);
-          setAge(item.age);
-
-          console.log('Response Appointment id: ', item.id);
-          console.log('Response patientName: ', item.patientName);
-          console.log('Response clinicName: ', item.clinicName);
-          console.log('Response doctorName: ', item.doctorName);
-          console.log('Response visitDate: ', item.visitDate);
-          console.log('Response tokenNumber: ', item.tokenNumber);
-
-          console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
-
-          console.log('Local Appointment Id:', appId);
-          console.log('Local Patient Name:', patientName);
-          console.log('Local Clinic Name:', clinicName);
-          console.log('Local Doctor Name:', doctorName);
-          console.log('Local Visit Date:', visitDate);
-          console.log('Local Token Number:', tokenNumber);
-          console.log('Local Followup Date:', follDate);
-        });
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  };
-
-  const [selected, setSelected] = useState([]);
-  const [treatDetail, setTreatDetail] = useState([]);
-
   const appObj = {
-    id: appId,
-    patientName: patientName,
-    clinicName: clinicName,
-    doctorName: doctorName,
-    visitDate: visitDate,
-    tokenNumber: tokenNumber,
-    status: 1,
-    clinicTotalAppointments: clinicTotalAppointments,
-    clinicLastAppointmentToken: clinicLastAppointmentToken,
+    id: selectedPatient.selectedPatient.id,
+    patientName: selectedPatient.selectedPatient.patientName,
+    clinicName: selectedPatient.selectedPatient.clinicName,
+    doctorName: selectedPatient.selectedPatient.doctorName,
+    visitDate: checked ? selectedPatient.selectedPatient.visitDate : follDate,
+    tokenNumber: selectedPatient.selectedPatient.tokenNumber,
+    status: checked ? 1 : 0,
+    clinicTotalAppointments: selectedPatient.selectedPatient.clinicTotalAppointments,
+    clinicLastAppointmentToken: selectedPatient.selectedPatient.clinicLastAppointmentToken,
     charges: charges,
     prescription: prescription,
     diagnosis: diagnosis,
     weight: weight,
     bloodPressure: bp,
-    followupDate: follDate,
-    patientId: 6,
-    clinicId: 3,
-    doctorId: 1,
+    followupDate: checked ? ' ' : follDate,
+    patientId: selectedPatient.selectedPatient.patientId,
+    clinicId: selectedPatient.selectedPatient.clinicId,
+    doctorId: selectedPatient.selectedPatient.doctorId,
     //hardcoded treatment for now
     treatments: [{ id: 1, name: 'Crown Luting', detail: 'Detail 1' }],
   };
@@ -188,6 +139,7 @@ const Page = () => {
   const encodedAppObj = encodeURIComponent(JSON.stringify(appObj));
 
   const updateAppointment = () => {
+    console.log('checkbox:', checked);
     axios
       .get(`${url}setAppointment?token=${token}&appointment=${encodedAppObj}`)
       .then((res) => {
@@ -205,13 +157,6 @@ const Page = () => {
             Dialog.hide();
           },
         });
-
-        console.log('BP: ', bp);
-        console.log('Weight: ', weight);
-        console.log('Charges: ', charges);
-        console.log('Prescription: ', prescription);
-        console.log('Diagnosis: ', diagnosis);
-        console.log('Followup Date: ', follDate);
       })
       .catch((error) => {
         console.error('Error updating appointment:', error);
@@ -234,7 +179,7 @@ const Page = () => {
                 Name:
               </CusText>
               <CusText bold size="md" color="yellow">
-                {patientName}
+                {selectedPatient.selectedPatient.patientName}
               </CusText>
             </XStack>
             <XStack gap={spacingS}>
@@ -242,7 +187,7 @@ const Page = () => {
                 Age:
               </CusText>
               <CusText bold size="md" color="yellow">
-                34
+                {selectedPatient.selectedPatient.age}
               </CusText>
             </XStack>
             <XStack gap={spacingS}>
@@ -250,7 +195,8 @@ const Page = () => {
                 Visit Date:
               </CusText>
               <CusText bold size="md" color="yellow">
-                {visitDate && dayjs(visitDate).format('D/M/YYYY')}
+                {selectedPatient.selectedPatient.visitDate &&
+                  dayjs(selectedPatient.selectedPatient.visitDate).format('D/M/YYYY')}
               </CusText>
             </XStack>
             <XStack gap={spacingS}>
@@ -258,7 +204,7 @@ const Page = () => {
                 Appointment Token:
               </CusText>
               <CusText bold size="md" color="yellow">
-                {tokenNumber}
+                {selectedPatient.selectedPatient.tokenNumber}
               </CusText>
             </XStack>
           </Card>
@@ -419,7 +365,7 @@ const Page = () => {
 
                 {/*  Checkbox completed */}
 
-                <CheckboxWithLabel size="$4" defaultChecked={checked} />
+                <CheckboxWithLabel size="$4" checked={checked} onChange={setChecked} />
 
                 {/* Checkup Completed */}
 
@@ -508,9 +454,16 @@ const Page = () => {
 
 function CheckboxWithLabel({
   size,
+  checked,
+  onChange,
   label = 'Checkup Completed',
   ...checkboxProps
-}: CheckboxProps & { size: SizeTokens; label?: string }) {
+}: CheckboxProps & {
+  size: SizeTokens;
+  label?: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
   const id = `checkbox-${size.toString().slice(1)}`;
   return (
     <XStack width={300} alignItems="center" space="$2">
@@ -519,6 +472,8 @@ function CheckboxWithLabel({
         backgroundColor={colors.lightGray}
         borderColor={colors.primary}
         borderWidth={2}
+        checked={checked}
+        onCheckedChange={onChange}
         id={id}
         size={size}
         {...checkboxProps}>

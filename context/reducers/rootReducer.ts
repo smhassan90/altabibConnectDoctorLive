@@ -5,6 +5,7 @@ import appointmentReducer from './appointmentReducer';
 import tokenReducer from './tokenReducer';
 import userReducer from './userReducer';
 import patientReducer from './patientReducer';
+import selectedPatient from './selectedPatientReducer';
 
 const rootReducer = combineReducers({
   doctors: doctorReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   tokens: tokenReducer,
   users: userReducer,
   patients: patientReducer,
+  selectedPatient: selectedPatient,
 });
 
 export default rootReducer;

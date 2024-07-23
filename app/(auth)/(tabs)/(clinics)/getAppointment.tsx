@@ -1,20 +1,23 @@
 import axios from 'axios';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, Platform, Modal } from 'react-native';
+import { TouchableOpacity, Platform } from 'react-native';
 import { FlatList, RefreshControl } from 'react-native-gesture-handler';
 import { Button, ButtonText, Card, Text, View, XStack, YStack } from 'tamagui';
-import { borderRadiusM, colors, fontBold, fontM, spacingM, spacingS } from '~/app/styles';
+import { borderRadiusM, colors, fontBold, spacingM, spacingS } from '~/app/styles';
 import TitleBar from '~/components/TitleBar';
 import { url } from '~/env';
 import * as SecureStore from 'expo-secure-store';
 import dayjs from 'dayjs';
 import { CusText } from '~/components/CusText';
 import { CusBtn } from '~/components/CusBtn';
-import RNDateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 import Header from '~/components/Header';
+import { useDispatch } from 'react-redux';
+import { selectPatient } from '~/context/actions/selectedPatientAction';
 
 export default function Page() {
+  const dispatch = useDispatch();
   const token = SecureStore.getItem('token');
   const clinicId = SecureStore.getItem('clinicId');
   const doctorId = SecureStore.getItem('doctorId');
@@ -44,10 +47,10 @@ export default function Page() {
     // Axios GET request to fetch doctors data
     axios
       .get(
-        `${url}viewAppointments?token=${token}&visitDate=${formatDate}&clinicId=${clinicId}&appointmentId=0&patientId=0&doctorId=${doctorId}&followupDate`
+        `${url}viewAppointments?token=${token}&visitDate=${formatDate}&clinicId=${clinicId}&appointmentId=0&patientId=0&doctorId=${doctorId}&followupDate=`
       )
       .then((res) => {
-        console.log('Response:', JSON.stringify(res.data.data, null, 2));
+        console.log('Response:', JSON.stringify(res.data, null, 2));
         console.log('Response Appointment Data:', JSON.stringify(res.data.data, null, 2));
 
         const successAppsArray: any[] = [];
@@ -89,18 +92,9 @@ export default function Page() {
     console.log('Patient ID:', val);
   };
 
-  const goToCheckup = (
-    date: string,
-    appId: number,
-    pId: number,
-    doctorId: number,
-    clinicId: number
-  ) => {
-    // SecureStore.setItem('appDate', date);
-    // SecureStore.setItem('appId', appId.toString());
-    // SecureStore.setItem('clinicId', appId.toString());
-    // SecureStore.setItem('patientId', pId.toString());
-    // SecureStore.setItem('doctorId', doctorId.toString());
+  const goToCheckup = (item: any) => {
+    dispatch(selectPatient(item));
+    console.log('Selected Patient:', JSON.stringify(item, null, 2));
     router.push('/checkup');
   };
 
@@ -240,6 +234,22 @@ export default function Page() {
                   </XStack>
                   <XStack gap={spacingS}>
                     <CusText bold size="md" color="yellow">
+                      Total Appointments:
+                    </CusText>
+                    <CusText bold size="md" color="primary">
+                      {item.totalAppointments}
+                    </CusText>
+                  </XStack>
+                  <XStack gap={spacingS}>
+                    <CusText bold size="md" color="yellow">
+                      Current Token:
+                    </CusText>
+                    <CusText bold size="md" color="primary">
+                      {item.currentAppointment}
+                    </CusText>
+                  </XStack>
+                  <XStack gap={spacingS}>
+                    <CusText bold size="md" color="yellow">
                       Appointment Token:
                     </CusText>
                     <CusText bold size="md" color="primary">
@@ -262,7 +272,7 @@ export default function Page() {
                       Patient History
                     </CusBtn>
                     <CusBtn
-                      onPress={() => goToCheckup(item.visitDate, item.id)}
+                      onPress={() => goToCheckup(item)}
                       color={colors.yellow}
                       textColor="white">
                       Checkup
