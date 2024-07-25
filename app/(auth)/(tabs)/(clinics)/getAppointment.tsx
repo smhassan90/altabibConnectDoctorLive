@@ -309,7 +309,7 @@ export default function Page() {
                   <CusText bold size="md" color="yellow">
                     Patient Name:
                   </CusText>
-                  <CusText bold size="md" color="yellow">
+                  <CusText bold size="md" color="primary">
                     {item.patientName}
                   </CusText>
                 </XStack>
@@ -317,7 +317,7 @@ export default function Page() {
                   <CusText bold size="md" color="yellow">
                     Appointment Token:
                   </CusText>
-                  <CusText bold size="md" color="yellow">
+                  <CusText bold size="md" color="primary">
                     {item.tokenNumber}
                   </CusText>
                 </XStack>
@@ -325,7 +325,7 @@ export default function Page() {
                   <CusText bold size="md" color="yellow">
                     Doctor:
                   </CusText>
-                  <CusText bold size="md" color="yellow">
+                  <CusText bold size="md" color="primary">
                     {item.doctorName}
                   </CusText>
                 </XStack>
@@ -333,7 +333,7 @@ export default function Page() {
                   <CusText bold size="md" color="yellow">
                     Clinic:
                   </CusText>
-                  <CusText bold size="md" color="yellow">
+                  <CusText bold size="md" color="primary">
                     {item.clinicName}
                   </CusText>
                 </XStack>
@@ -341,7 +341,7 @@ export default function Page() {
                   <CusText bold size="md" color="yellow">
                     Diagnosis:
                   </CusText>
-                  <CusText bold size="md" color="yellow">
+                  <CusText bold size="md" color="primary">
                     {item.diagnosis}
                   </CusText>
                 </XStack>

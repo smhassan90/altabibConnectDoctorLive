@@ -59,6 +59,7 @@ const Page = () => {
   const [checked, setChecked] = useState(false);
 
   const [selectedTreatment, setSelectedTreatment] = useState(null);
+  const [treatmentDetail, setTreatmentDetail] = useState('');
   const [treatments, setTreatments] = useState([]);
 
   const handleUpBpChange = (val: string) => setUpBloodPressure(val);
@@ -72,46 +73,37 @@ const Page = () => {
   const handlePrescriptionChange = (val: string) => setPrescription(val);
   const handleDiagnosisChange = (val: string) => setDiagnosis(val);
 
-  const dropdownItems = [
-    {
-      id: 4,
-      name: 'Root Canal',
-      charges: 0,
-      doctorType: 3,
-      updateDate: '2022-09-01 09:56:08',
-    },
-    {
-      id: 5,
-      name: 'Consultation',
-      charges: 0,
-      doctorType: 3,
-      updateDate: '2022-09-01 09:56:08',
-    },
-    {
-      id: 6,
-      name: 'X-RAY',
-      charges: 0,
-      doctorType: 3,
-      updateDate: '2022-09-01 09:56:08',
-    },
-  ];
+  const [treatmentList, setTreatmentList] = useState([]);
 
   const handleAddTreatment = () => {
-    if (selectedTreatment && !treatments.find((t) => t.id === selectedTreatment.id)) {
+    if (selectedTreatment && treatmentDetail) {
       const newTreatment = {
-        id: selectedTreatment.id,
+        id: 0,
         name: selectedTreatment.name,
+        detail: treatmentDetail,
       };
       setTreatments([...treatments, newTreatment]);
+      setSelectedTreatment(null);
+      setTreatmentDetail('');
     }
   };
 
   useEffect(() => {
-    // Set initial selected treatment if available
-    if (dropdownItems.length > 0 && !selectedTreatment) {
-      setSelectedTreatment(dropdownItems[0]);
+    if (treatmentList.length > 0 && !selectedTreatment) {
+      setSelectedTreatment(treatmentList[0]);
     }
-  }, [dropdownItems, selectedTreatment]);
+  }, [treatmentList]);
+
+  useEffect(() => {
+    axios.get(`${url}getTreatments?token=${token}`).then((res) => {
+      console.log('Response:', JSON.stringify(res.data, null, 2));
+      const treatments = res.data.data.treatmentBanks;
+      setTreatmentList(treatments);
+      setTimeout(() => {
+        console.log('Treatments:', JSON.stringify(treatmentList, null, 2));
+      }, 1000);
+    });
+  }, []);
 
   const appObj = {
     id: selectedPatient.selectedPatient.id,
@@ -132,8 +124,7 @@ const Page = () => {
     patientId: selectedPatient.selectedPatient.patientId,
     clinicId: selectedPatient.selectedPatient.clinicId,
     doctorId: selectedPatient.selectedPatient.doctorId,
-    //hardcoded treatment for now
-    treatments: [{ id: 1, name: 'Crown Luting', detail: 'Detail 1' }],
+    treatments: treatments,
   };
 
   const encodedAppObj = encodeURIComponent(JSON.stringify(appObj));
@@ -153,7 +144,6 @@ const Page = () => {
           textBody: 'This appointment was completed successfully',
           button: 'Close',
           onPressButton() {
-            // router.push('/(auth)/(tabs)/(clinics)');
             Dialog.hide();
           },
         });
@@ -173,7 +163,6 @@ const Page = () => {
         <YStack flex={1} gap={spacingM} padding={spacingM}>
           <Card gap={spacingM} padded backgroundColor={colors.white}>
             {/* Patient Details */}
-
             <XStack gap={spacingS}>
               <CusText bold size="md" color="primary">
                 Name:
@@ -210,12 +199,10 @@ const Page = () => {
           </Card>
 
           {/* Checkup Card */}
-
           <Card padded flex={1} backgroundColor={colors.white}>
-            {/* Vital Signs */}
-
             <ScrollView style={{ flex: 1 }}>
               <YStack gap={spacingM}>
+                {/* Vital Signs */}
                 <XStack
                   alignItems="center"
                   borderRadius={5}
@@ -237,7 +224,6 @@ const Page = () => {
                 </XStack>
 
                 {/* Weight */}
-
                 <XStack
                   alignItems="center"
                   borderRadius={5}
@@ -253,7 +239,6 @@ const Page = () => {
                 </XStack>
 
                 {/* Charges */}
-
                 <XStack
                   alignItems="center"
                   borderRadius={5}
@@ -268,7 +253,6 @@ const Page = () => {
                 </XStack>
 
                 {/* Prescription */}
-
                 <XStack
                   alignItems="center"
                   borderRadius={5}
@@ -282,7 +266,6 @@ const Page = () => {
                 </XStack>
 
                 {/* Diagnosis */}
-
                 <XStack
                   alignItems="center"
                   borderRadius={5}
@@ -296,7 +279,6 @@ const Page = () => {
                 </XStack>
 
                 {/* Treatment Selector */}
-
                 <Card
                   gap={spacingM}
                   borderWidth={2}
@@ -310,24 +292,24 @@ const Page = () => {
                   <View gap={spacingM}>
                     <Picker
                       mode="dropdown"
-                      selectedValue={selectedTreatment}
-                      onValueChange={(itemValue: any, itemIndex: any) =>
-                        setSelectedTreatment(itemValue)
-                      }>
-                      {selectedTreatment ? null : (
-                        <Picker.Item label="Select a treatment" value={null} />
-                      )}
-                      {dropdownItems
-                        .filter((item) => item !== selectedTreatment)
-                        .map((item, index) => (
-                          <Picker.Item key={index} label={item.name} value={item} />
-                        ))}
+                      selectedValue={selectedTreatment ? selectedTreatment.id : null}
+                      onValueChange={(itemValue) => {
+                        const selected = treatmentList.find((item) => item.id === itemValue);
+                        setSelectedTreatment(selected);
+                      }}>
+                      <Picker.Item label="Select a treatment" value={null} />
+                      {treatmentList.map((item) => (
+                        <Picker.Item key={item.id} label={item.name} value={item.id} />
+                      ))}
                     </Picker>
 
                     <TextInput
+                      value={treatmentDetail}
+                      onChangeText={setTreatmentDetail}
                       placeholder="Detail"
                       placeholderTextColor={colors.primary}
-                      style={styl.input}></TextInput>
+                      style={styl.input}
+                    />
 
                     <Button
                       backgroundColor={colors.primary}
@@ -344,10 +326,13 @@ const Page = () => {
                         unstyled
                         padded
                         flexDirection="row"
-                        justifyContent="space-around"
+                        justifyContent="space-between"
                         alignItems="center"
                         key={index}>
-                        <Text>{treatment.name}</Text>
+                        <View>
+                          <Text>{treatment.name}</Text>
+                          <Text>{treatment.detail}</Text>
+                        </View>
                         <FontAwesome name="check-circle" size={24} color={colors.primary} />
                       </Card>
                     ))}
@@ -355,7 +340,6 @@ const Page = () => {
                 </Card>
 
                 {/* Choose followup Date */}
-
                 <CusText bold size="md" color="primary">
                   Choose Follow-up Date:
                 </CusText>
@@ -364,11 +348,9 @@ const Page = () => {
                 </Button>
 
                 {/*  Checkbox completed */}
-
                 <CheckboxWithLabel size="$4" checked={checked} onChange={setChecked} />
 
                 {/* Checkup Completed */}
-
                 <XStack gap={spacingM}>
                   <Button flex={1} backgroundColor={colors.yellow}>
                     <ButtonText
@@ -468,7 +450,6 @@ function CheckboxWithLabel({
   return (
     <XStack width={300} alignItems="center" space="$2">
       <Checkbox
-        //defaultChecked
         backgroundColor={colors.lightGray}
         borderColor={colors.primary}
         borderWidth={2}
@@ -488,6 +469,7 @@ function CheckboxWithLabel({
     </XStack>
   );
 }
+
 export default Page;
 
 const styl = StyleSheet.create({
