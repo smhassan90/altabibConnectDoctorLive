@@ -13,19 +13,19 @@ import {
   spacingM,
   spacingS,
   styles,
-} from '~/app/styles';
-import { url } from '~/env';
-import TitleBar from '~/components/TitleBar';
+} from '../../../styles';
+import { url } from '../../../../env';
+import TitleBar from '../../../../components/TitleBar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import Spinner from '~/components/Spinner';
 import * as SecureStore from 'expo-secure-store';
-import { CusText } from '~/components/CusText';
-import { CusBtn } from '~/components/CusBtn';
+import { CusText } from '../../../../components/CusText';
+import { CusBtn } from '../../../../components/CusBtn';
 import { RefreshControl } from 'react-native-gesture-handler';
-import { HeartLoader } from '~/components/CusAnimations';
+import { HeartLoader } from '../../../../components/CusAnimations';
 import constants from 'expo-constants';
-import Header from '~/components/Header';
+import Header from '../../../../components/Header';
 import dayjs from 'dayjs';
 
 const loaderWidth = Dimensions.get('window').width;

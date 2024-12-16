@@ -5,7 +5,7 @@ import { TamaguiProvider } from 'tamagui';
 import { useFonts } from 'expo-font';
 import config from '../tamagui.config';
 import { Provider } from 'react-redux';
-import store from '~/context/store';
+import store from '../context/store';
 import { tokenCache } from './getToken';
 
 export default function RootLayout() {
@@ -16,9 +16,9 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
-    Arial: require('@fonts/Arial-Regular.ttf'),
-    ArialB: require('@fonts/Arial-Bold.ttf'),
-    ArialL: require('@fonts/Arial-Light.ttf'),
+    Arial: require('./../assets/fonts/Arial-Light.ttf'),
+    ArialB: require('./../assets/fonts/Arial-Bold.ttf'),
+    ArialL: require('./../assets/fonts/Arial-Light.ttf'),
   });
 
   const InitialLayout = () => {

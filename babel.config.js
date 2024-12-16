@@ -14,6 +14,17 @@ module.exports = function(api) {
 
   
     plugins.push('react-native-reanimated/plugin');
+
+  plugins.push([
+    'module-resolver',
+    {
+      root: ['./'],  // Project root
+      alias: {
+        '~': './',
+        '@animations': './app/assets/animations',  // Your alias for animations folder
+      },
+    },
+  ]);
   
 
   return {

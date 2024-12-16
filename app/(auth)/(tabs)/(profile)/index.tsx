@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import TitleBar from '~/components/TitleBar';
-import { colors, paddingM, styles } from '~/app/styles';
+import TitleBar from './../../../../components/TitleBar';
+import { colors, paddingM, styles } from './../../../../app/styles';
 import { Card, Image, Text, View, XStack, YStack } from 'tamagui';
 import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-import { url } from '~/env';
+import { url } from './../../../../env';
 import * as SecureStore from 'expo-secure-store';
 import { ALERT_TYPE, AlertNotificationRoot, Dialog } from 'react-native-alert-notification';
-import Header from '~/components/Header';
-import { userData } from '~/components/home/CustomContent';
-import { CusText } from '~/components/CusText';
+import Header from './../../../../components/Header';
+import { userData } from './../../../..//components/home/CustomContent';
+import { CusText } from './../../../../components/CusText';
 
 export default function Page() {
   const [password, setPassword] = useState('');

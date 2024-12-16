@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import TitleBar from '~/components/TitleBar';
-import { borderRadiusM, colors, paddingL, spacingM, spacingS } from '~/app/styles';
+import TitleBar from '../../../../components/TitleBar';
+import { borderRadiusM, colors, paddingL, spacingM, spacingS } from '../../../styles';
 import { View, XStack, YStack } from 'tamagui';
 import axios from 'axios';
-import { url } from '~/env';
+import { url } from '../../../../env';
 import * as SecureStore from 'expo-secure-store';
 import { FlatList, RefreshControl } from 'react-native';
-import Header from '~/components/Header';
-import { CusText } from '~/components/CusText';
+import Header from '../../../../components/Header';
+import { CusText } from '../../../../components/CusText';
 
 const Page = () => {
   const token = SecureStore.getItem('token');

@@ -3,12 +3,12 @@ import { Drawer } from 'expo-router/drawer';
 import { colors } from '../styles';
 import { Platform } from 'react-native';
 import * as Device from 'expo-device';
-import { CustomContent } from '~/components/home/CustomContent';
+import { CustomContent } from '../../components/home/CustomContent';
 import * as Notifications from 'expo-notifications';
 import * as SecureStore from 'expo-secure-store';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { url } from '~/env';
+import { url } from '../../env';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

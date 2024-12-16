@@ -28,7 +28,7 @@ export const HeartLoader = () => {
           color: '#ffa600',
         },
       ]}
-      source={require('@animations/HeartLoader.json')}
+      source={require('./../assets/animations/HeartLoader.json')}
     />
   );
 };
@@ -52,7 +52,7 @@ export const Spinner = () => {
           color: '#0066a1',
         },
       ]}
-      source={require('@animations/PulseDefault.json')}
+      source={require('./../assets/animations/PulseDefault.json')}
     />
   );
 };
@@ -66,7 +66,7 @@ export const Success = () => {
         width: 100,
         height: 100,
       }}
-      source={require('@animations/Success.json')}
+      source={require('./../assets/animations/Success.json')}
     />
   );
 };
@@ -79,7 +79,7 @@ export const Error = () => {
         width: 100,
         height: 100,
       }}
-      source={require('@animations/Error.json')}
+      source={require('./../assets/animations/Error.json')}
     />
   );
 };

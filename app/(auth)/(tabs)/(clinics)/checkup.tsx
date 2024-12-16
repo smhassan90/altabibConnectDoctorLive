@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { colors, spacingM, spacingS } from '~/app/styles';
-import TitleBar from '~/components/TitleBar';
+import { colors, spacingM, spacingS } from '../../../styles';
+import TitleBar from '../../../../components/TitleBar';
 import {
   Button,
   ButtonText,
@@ -21,13 +21,13 @@ import DateTimePicker, { DateType } from 'react-native-ui-datepicker';
 import { BlurView } from 'expo-blur';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
-import { url } from '~/env';
+import { url } from '../../../../env';
 import { useRouter } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import { ALERT_TYPE, AlertNotificationRoot, Dialog } from 'react-native-alert-notification';
 import * as SecureStore from 'expo-secure-store';
-import Header from '~/components/Header';
-import { CusText } from '~/components/CusText';
+import Header from '../../../../components/Header';
+import { CusText } from '../../../../components/CusText';
 import { useSelector } from 'react-redux';
 
 const Page = () => {

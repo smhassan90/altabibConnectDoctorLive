@@ -6,11 +6,11 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { AlertNotificationRoot } from 'react-native-alert-notification';
-import { colors } from '~/app/styles';
+import { colors } from './../styles';
 import React from 'react';
-import LoginCard from '~/components/loginRegister/LoginCard';
+import LoginCard from './../../components/loginRegister/LoginCard';
 import { Text, View } from 'tamagui';
-import { CusText } from '~/components/CusText';
+import { CusText } from './../../components/CusText';
 
 const LoginScreen = () => {
   return (

@@ -4,12 +4,12 @@ import { DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navi
 import { router, useNavigation } from 'expo-router';
 import { Button, ButtonText, Text, View, Image, YStack } from 'tamagui';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { tokenCache } from '~/app/getToken';
+import { tokenCache } from './../../app/getToken';
 import * as SecureStore from 'expo-secure-store';
-import { url } from '~/env';
+import { url } from './../../env';
 import axios from 'axios';
 import constants from 'expo-constants';
-import { colors, iconSize } from '~/app/styles';
+import { colors, iconSize } from './../../app/styles';
 import { FontAwesome, FontAwesome6, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { DrawerActions } from '@react-navigation/native';
 
@@ -99,7 +99,7 @@ export const CustomContent = (props: any) => {
             marginBottom: 10,
             gap: 10,
           }}>
-          <Image height={100} width={100} borderRadius={50} source={require('~/assets/man.png')} />
+          <Image height={100} width={100} borderRadius={50} source={require('./../../assets/man.png')} />
           <YStack gap={3}>
             <Text color={colors.white} fontSize={16} fontFamily={'ArialB'}>
               {userData.name}

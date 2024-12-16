@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'tamagui';
-import { colors } from '~/app/styles';
+import { colors } from '../app/styles';
 
 export type TextProps = {
   color?: string;

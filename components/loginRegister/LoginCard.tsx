@@ -12,18 +12,18 @@ import { AntDesign } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import axios from 'axios';
 import * as Progress from 'react-native-progress';
-import { url } from '~/env';
+import { url } from './../../env';
 import { useDispatch } from 'react-redux';
-import { addUser } from '~/context/actions/userActions';
-import { colors, styles } from '~/app/styles';
+import { addUser } from './../../context/actions/userActions';
+import { colors, styles } from './../../app/styles';
 import * as SecureStore from 'expo-secure-store';
 
 const LoginCard = () => {
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
-  const [num, setNum] = useState('s.faheem');
-  const [pass, setPass] = useState('password123');
+  const [num, setNum] = useState('');
+  const [pass, setPass] = useState('');
   const [showPass, setShowPass] = useState(true);
 
   const validateNum = (num: string) => num.length >= 3;
@@ -129,7 +129,6 @@ const LoginCard = () => {
             <Separator vertical borderColor={'lightgray'} />
             <TextInput
               value={num}
-              keyboardType="numeric"
               maxLength={11}
               style={{ padding: 0, flex: 1, fontFamily: 'ArialB' }}
               placeholder="Phone"

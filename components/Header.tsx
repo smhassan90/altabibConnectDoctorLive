@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'tamagui';
 import constants from 'expo-constants';
-import { borderRadiusL, colors } from '~/app/styles';
+import { borderRadiusL, colors } from '../app/styles';
 
 const Header = ({ children }: { children: React.ReactNode }) => {
   return (

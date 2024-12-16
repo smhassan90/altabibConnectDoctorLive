@@ -1,6 +1,6 @@
 import { AntDesign, FontAwesome, SimpleLineIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { colors } from '~/app/styles';
+import { colors } from './../../styles';
 
 export default function TabLayout() {
   return (

@@ -4,17 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, Platform } from 'react-native';
 import { FlatList, RefreshControl } from 'react-native-gesture-handler';
 import { Button, ButtonText, Card, Text, View, XStack, YStack } from 'tamagui';
-import { borderRadiusM, colors, fontBold, spacingM, spacingS } from '~/app/styles';
-import TitleBar from '~/components/TitleBar';
-import { url } from '~/env';
+import { borderRadiusM, colors, fontBold, spacingM, spacingS } from '../../../styles';
+import TitleBar from '../../../../components/TitleBar';
+import { url } from '../../../../env';
 import * as SecureStore from 'expo-secure-store';
 import dayjs from 'dayjs';
-import { CusText } from '~/components/CusText';
-import { CusBtn } from '~/components/CusBtn';
+import { CusText } from '../../../../components/CusText';
+import { CusBtn } from '../../../../components/CusBtn';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import Header from '~/components/Header';
+import Header from '../../../../components/Header';
 import { useDispatch } from 'react-redux';
-import { selectPatient } from '~/context/actions/selectedPatientAction';
+import { selectPatient } from '../../../../context/actions/selectedPatientAction';
 
 export default function Page() {
   const dispatch = useDispatch();

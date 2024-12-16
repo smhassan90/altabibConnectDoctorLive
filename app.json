@@ -1,4 +1,4 @@
-{
+ {
   "expo": {
     "name": "al-tabib-connect-doctor",
     "slug": "al-tabib-connect-doctor",
@@ -31,7 +31,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.syedanasahmed.AlTabibConnectDoctor",
+      "package": "com.fynals.AlTabibConnectDoctor",
       "googleServicesFile": "./google-services.json"
     },
     "extra": {

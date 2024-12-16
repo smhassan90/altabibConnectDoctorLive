@@ -2,12 +2,12 @@ import { Platform, StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { WebView } from 'react-native-webview';
 import * as SecureStore from 'expo-secure-store';
-import { url } from '~/env';
+import { url } from './../../../../env';
 import axios from 'axios';
 import { View, YStack } from 'tamagui';
-import Header from '~/components/Header';
-import TitleBar from '~/components/TitleBar';
-import { borderRadiusM, colors, paddingM, paddingS, spacingM } from '~/app/styles';
+import Header from './../../../../components/Header';
+import TitleBar from './../../../../components/TitleBar';
+import { borderRadiusM, colors, paddingM, paddingS, spacingM } from './../../../../app/styles';
 
 const index = () => {
   const TOKEN = SecureStore.getItem('token');

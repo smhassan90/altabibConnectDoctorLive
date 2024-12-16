@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import React from 'react';
-import { colors } from '~/app/styles';
+import { colors } from '../app/styles';
 import * as Progress from 'react-native-progress';
 import { Text } from 'tamagui';
 
