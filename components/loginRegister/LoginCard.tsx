@@ -129,7 +129,7 @@ const LoginCard = () => {
             <Separator vertical borderColor={'lightgray'} />
             <TextInput
               value={num}
-              maxLength={11}
+              maxLength={20}
               style={{ padding: 0, flex: 1, fontFamily: 'ArialB' }}
               placeholder="Phone"
               onChangeText={handleNumChange}

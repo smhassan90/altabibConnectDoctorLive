@@ -39,6 +39,28 @@ export let userData: userData = {
   ],
 };
 
+
+export const handleLogout = () => {
+  Alert.alert(
+    'Logout',
+    'Are you sure you want to logout?',
+    [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Yes',
+        onPress: () => {
+          tokenCache.deleteToken();
+          router.replace('/Login');
+        },
+      },
+    ],
+    { cancelable: false }
+  );
+};
+
 export const CustomContent = (props: any) => {
   const navigation = useNavigation();
   const topSpace = constants.statusBarHeight;
@@ -62,26 +84,7 @@ export const CustomContent = (props: any) => {
 
   const { top, bottom } = useSafeAreaInsets();
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Yes',
-          onPress: () => {
-            tokenCache.deleteToken();
-            router.replace('/Login');
-          },
-        },
-      ],
-      { cancelable: false }
-    );
-  };
+
 
   return (
     <View flex={1}>
@@ -135,6 +138,18 @@ export const CustomContent = (props: any) => {
             navigation.dispatch(DrawerActions.closeDrawer());
           }}
         />
+                {/* <DrawerItem
+          style={{ marginLeft: 20 }}
+          labelStyle={{ fontFamily: 'ArialB', color: colors.white }}
+          icon={({ size, color }) => (
+            <MaterialIcons name="house" size={iconSize} color={colors.yellow} />
+          )}
+          label={'Add patient'}
+          onPress={() => {
+            router.push('/(auth)/(tabs)/(patients)');
+            navigation.dispatch(DrawerActions.closeDrawer());
+          }}
+        /> */}
         <DrawerItem
           style={{ marginLeft: 20 }}
           labelStyle={{ fontFamily: 'ArialB', color: colors.white }}
@@ -157,3 +172,5 @@ export const CustomContent = (props: any) => {
     </View>
   );
 };
+
+

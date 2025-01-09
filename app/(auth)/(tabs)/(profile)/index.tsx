@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TitleBar from './../../../../components/TitleBar';
 import { colors, paddingM, styles } from './../../../../app/styles';
 import { Card, Image, Text, View, XStack, YStack } from 'tamagui';
-import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity,Button } from 'react-native';
 import axios from 'axios';
 import { url } from './../../../../env';
 import * as SecureStore from 'expo-secure-store';
@@ -10,6 +10,7 @@ import { ALERT_TYPE, AlertNotificationRoot, Dialog } from 'react-native-alert-no
 import Header from './../../../../components/Header';
 import { userData } from './../../../..//components/home/CustomContent';
 import { CusText } from './../../../../components/CusText';
+import { handleLogout } from './../../../..//components/home/CustomContent';
 
 export default function Page() {
   const [password, setPassword] = useState('');
