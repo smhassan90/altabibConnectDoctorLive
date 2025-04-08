@@ -199,8 +199,9 @@ export default function Page() {
                 </Text>
               </TouchableOpacity>
             )}
+            
 
-            <TouchableOpacity style={styles.secBtn} onPress={() => {}}>
+            <TouchableOpacity style={styles.secBtn} onPress={handleLogout}>
               <Text fontFamily={'ArialB'} color={colors.white}>
                 Logout
               </Text>
