@@ -73,7 +73,7 @@ const LoginCard = () => {
   //USE YOUR OWN URL!!
 
   const loginUrl = `${url}login?username=${num}&password=${pass}&UUID=${currentTimeStamp}&type=3`;
-
+console.log(loginUrl)
   const fetchLoginData = () => {
     setLoading(true);
     axios
@@ -92,6 +92,7 @@ const LoginCard = () => {
 
           console.log('RESPONSE STATUS: ', JSON.stringify(response.status, null, 2));
           console.log('LOGIN TOKEN: ', JSON.stringify(response.data.data.token, null, 2));
+          console.log(loginUrl,"url")
           SecureStore.setItem('token', response.data.data.token);
           console.log('Token stored successfully');
           setLoading(false);
