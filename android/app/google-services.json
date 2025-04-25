@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "524637954418",
+    "project_id": "al-tabib-connect-doctor",
+    "storage_bucket": "al-tabib-connect-doctor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524637954418:android:f85f37e55e0900cc5d7deb",
+        "android_client_info": {
+          "package_name": "com.fynals.AlTabibConnectDoctor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUl6ytyOVH12JU1jm7m2h6cLLZheqW238"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

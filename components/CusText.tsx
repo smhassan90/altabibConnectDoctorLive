@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'tamagui';
-import { colors } from '../app/styles';
+import { colors,fontFamily,fontSizes } from '../app/styles';
 
 export type TextProps = {
   color?: string;
@@ -25,6 +25,30 @@ export const CusText = ({ color, children, bold, size }: TextProps) => {
               ? colors.yellow
               : undefined
       }>
+      {children}
+    </Text>
+  );
+};
+
+export const PrimBold = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Text
+      fontFamily={fontFamily.bold}
+      fontSize={fontSizes.SM}
+      color={colors.primary}
+    >
+      {children}
+    </Text>
+  );
+};
+
+export const LinkText = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Text
+      fontFamily={fontFamily.bold}
+      fontSize={fontSizes.SM}
+      color={colors.linkBlue}
+    >
       {children}
     </Text>
   );

@@ -39,7 +39,6 @@ export let userData: userData = {
   ],
 };
 
-
 export const handleLogout = () => {
   Alert.alert(
     'Logout',
@@ -65,8 +64,8 @@ export const CustomContent = (props: any) => {
   const navigation = useNavigation();
   const topSpace = constants.statusBarHeight;
 
+  const token = SecureStore.getItem('token');
   useEffect(() => {
-    const token = SecureStore.getItem('token');
     axios
       .get(`${url}getProfile?token=${token}`)
       .then((res) => {
@@ -82,9 +81,40 @@ export const CustomContent = (props: any) => {
       });
   }, []);
 
+const handleDeleteAccount = () => {
+    Alert.alert(
+      'Confirm Delete',
+      'Are you sure you want to Delete Account?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: () => {
+            axios
+              .get(`${url}logoutDelete?token=${token}`)
+              .then((res) => {
+                if (res.data.status == 200) {
+                  console.log("Hello World")
+                  tokenCache.deleteToken();
+                  router.replace('/Login');
+                }
+              })
+              .catch((err) => {
+                console.log('Error Delete User:', err);
+              });
+            tokenCache.deleteToken();
+            router.replace('/Login');
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   const { top, bottom } = useSafeAreaInsets();
-
-
 
   return (
     <View flex={1}>
@@ -102,7 +132,12 @@ export const CustomContent = (props: any) => {
             marginBottom: 10,
             gap: 10,
           }}>
-          <Image height={100} width={100} borderRadius={50} source={require('./../../assets/man.png')} />
+          <Image
+            height={100}
+            width={100}
+            borderRadius={50}
+            source={require('./../../assets/man.png')}
+          />
           <YStack gap={3}>
             <Text color={colors.white} fontSize={16} fontFamily={'ArialB'}>
               {userData.name}
@@ -138,7 +173,7 @@ export const CustomContent = (props: any) => {
             navigation.dispatch(DrawerActions.closeDrawer());
           }}
         />
-                {/* <DrawerItem
+        {/* <DrawerItem
           style={{ marginLeft: 20 }}
           labelStyle={{ fontFamily: 'ArialB', color: colors.white }}
           icon={({ size, color }) => (
@@ -168,9 +203,14 @@ export const CustomContent = (props: any) => {
         <Button backgroundColor={'red'} marginHorizontal={10} onPress={handleLogout}>
           <ButtonText fontFamily={'ArialB'}>Logout</ButtonText>
         </Button>
+        <Button
+          backgroundColor={'red'}
+          marginHorizontal={10}
+          marginTop={10}
+          onPress={handleDeleteAccount}>
+          <ButtonText fontFamily={'ArialB'}>Permanent Delete Account</ButtonText>
+        </Button>
       </View>
     </View>
   );
 };
-
-

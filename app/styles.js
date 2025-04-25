@@ -1,5 +1,21 @@
 import { StyleSheet } from 'react-native';
 
+const fontFamily = {
+  bold: "ArialB",
+  regular: "Arial",
+};
+export { fontFamily };
+
+const fontSizes = {
+  XSM: 15,
+  SM: 16,
+  M: 18, //Doc Name,
+  L: 20,
+  XL: 24,
+};
+export { fontSizes };
+
+
 // SPACINGS
 export const spacingS = 5;
 export const spacingM = 10;

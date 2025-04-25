@@ -17,6 +17,7 @@ import { useDispatch } from 'react-redux';
 import { addUser } from './../../context/actions/userActions';
 import { colors, styles } from './../../app/styles';
 import * as SecureStore from 'expo-secure-store';
+import { LinkText, PrimBold } from '../CusText';
 
 const LoginCard = () => {
   const dispatch = useDispatch();
@@ -162,6 +163,12 @@ const LoginCard = () => {
               </Text>
             )}
           </TouchableOpacity>
+          <XStack alignItems="center" justifyContent="center" gap="$2" flexWrap="wrap">
+            <PrimBold>Do you have delete account?</PrimBold>
+            <TouchableOpacity onPress={() => router.push("/DeleteUser")}>
+              <LinkText>Delete Account</LinkText>
+            </TouchableOpacity>
+      </XStack>
         </YStack>
       </Card>
     </KeyboardAvoidingView>
