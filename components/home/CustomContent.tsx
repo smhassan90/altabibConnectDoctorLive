@@ -10,7 +10,7 @@ import { url } from './../../env';
 import axios from 'axios';
 import constants from 'expo-constants';
 import { colors, iconSize } from './../../app/styles';
-import { FontAwesome, FontAwesome6, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome6, MaterialIcons, SimpleLineIcons,Ionicons  } from '@expo/vector-icons';
 import { DrawerActions } from '@react-navigation/native';
 
 type userData = {
@@ -194,6 +194,18 @@ const handleDeleteAccount = () => {
           label={'Profile'}
           onPress={() => {
             router.push('/(auth)/(tabs)/(profile)');
+            navigation.dispatch(DrawerActions.closeDrawer());
+          }}
+        />
+        <DrawerItem
+          style={{ marginLeft: 20 }}
+          labelStyle={{ fontFamily: 'ArialB', color: colors.white }}
+          icon={({ size, color }) => (
+            <Ionicons name="notifications" size={iconSize} color={colors.yellow} />
+          )}
+          label={'Notification'}
+          onPress={() => {
+            router.push('/(auth)/(tabs)/(notification)');
             navigation.dispatch(DrawerActions.closeDrawer());
           }}
         />

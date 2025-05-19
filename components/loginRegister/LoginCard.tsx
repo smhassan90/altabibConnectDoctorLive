@@ -18,7 +18,7 @@ import { addUser } from './../../context/actions/userActions';
 import { colors, styles } from './../../app/styles';
 import * as SecureStore from 'expo-secure-store';
 import { LinkText, PrimBold } from '../CusText';
-
+import messaging from '@react-native-firebase/messaging';
 const LoginCard = () => {
   const dispatch = useDispatch();
 
@@ -79,16 +79,22 @@ console.log(loginUrl)
     setLoading(true);
     axios
       .get(loginUrl)
-      .then((response) => {
+      .then(async(response) => {
         //console log token
         //console.log('RESPONSE: ', JSON.stringify(response, null, 2));
-        if (response.status === 200) {
+        if (response?.data?.status == 200) {
+
           const USER = {
             name: num,
             pass: pass,
             token: response.data.data.token,
           };
-
+          try {
+            await messaging().subscribeToTopic(`doctor-${response.data.data.loginStatus.username}`)
+            console.log("Topic Subscription Successfully")
+          } catch (error) {
+            console.log("Subscription Error")
+          }
           dispatch(addUser(USER));
 
           console.log('RESPONSE STATUS: ', JSON.stringify(response.status, null, 2));
@@ -99,7 +105,7 @@ console.log(loginUrl)
           setLoading(false);
           router.replace('/(auth)/(tabs)/(clinics)/');
         } else {
-          console.log('Error, Status code: ', response.status);
+          console.log('Error, Status code: ', response.data);
           setLoading(false);
         }
       })

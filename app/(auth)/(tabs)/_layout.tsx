@@ -1,4 +1,4 @@
-import { AntDesign, FontAwesome, SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { colors } from './../../styles';
 
@@ -37,6 +37,14 @@ export default function TabLayout() {
           headerShown: false,
           tabBarLabel: 'Profile',
           tabBarIcon: ({color}) => <FontAwesome name="user-md" size={24} color={color} />
+        }}
+      />
+      <Tabs.Screen
+        name="(notifications)"
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Notification',
+          tabBarIcon: ({color}) => <Ionicons name="notifications" size={24} color={color} />,
         }}
       />
     </Tabs>

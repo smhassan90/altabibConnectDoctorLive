@@ -12,6 +12,7 @@ export type TextProps = {
 export const CusText = ({ color, children, bold, size }: TextProps) => {
   return (
     <Text
+      
       fontFamily={bold ? 'ArialB' : 'Arial'}
       fontSize={
         size == 'sm' ? 12 : size == 'md' ? 16 : size == 'lg' ? 20 : size == 'xl' ? 28 : undefined
@@ -23,6 +24,8 @@ export const CusText = ({ color, children, bold, size }: TextProps) => {
             ? colors.primary
             : color === 'yellow'
               ? colors.yellow
+               : color === 'red'
+               ? colors.red
               : undefined
       }>
       {children}
