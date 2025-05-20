@@ -6,6 +6,7 @@ import tokenReducer from './tokenReducer';
 import userReducer from './userReducer';
 import patientReducer from './patientReducer';
 import selectedPatient from './selectedPatientReducer';
+import selectedPatientId from './selectedPatientId';
 
 const rootReducer = combineReducers({
   doctors: doctorReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   users: userReducer,
   patients: patientReducer,
   selectedPatient: selectedPatient,
+  selectedPatientId: selectedPatientId,
 });
 
 export default rootReducer;

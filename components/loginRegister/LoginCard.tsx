@@ -19,6 +19,7 @@ import { colors, styles } from './../../app/styles';
 import * as SecureStore from 'expo-secure-store';
 import { LinkText, PrimBold } from '../CusText';
 import messaging from '@react-native-firebase/messaging';
+import { PrimaryBtn } from '../CusBtn';
 const LoginCard = () => {
   const dispatch = useDispatch();
 
@@ -74,32 +75,31 @@ const LoginCard = () => {
   //USE YOUR OWN URL!!
 
   const loginUrl = `${url}login?username=${num}&password=${pass}&UUID=${currentTimeStamp}&type=3`;
-console.log(loginUrl)
+  console.log(loginUrl);
   const fetchLoginData = () => {
     setLoading(true);
     axios
       .get(loginUrl)
-      .then(async(response) => {
+      .then(async (response) => {
         //console log token
         //console.log('RESPONSE: ', JSON.stringify(response, null, 2));
         if (response?.data?.status == 200) {
-
           const USER = {
             name: num,
             pass: pass,
             token: response.data.data.token,
           };
           try {
-            await messaging().subscribeToTopic(`doctor-${response.data.data.loginStatus.username}`)
-            console.log("Topic Subscription Successfully")
+            await messaging().subscribeToTopic(`doctor-${response.data.data.loginStatus.username}`);
+            console.log('Topic Subscription Successfully');
           } catch (error) {
-            console.log("Subscription Error")
+            console.log('Subscription Error');
           }
           dispatch(addUser(USER));
 
           console.log('RESPONSE STATUS: ', JSON.stringify(response.status, null, 2));
           console.log('LOGIN TOKEN: ', JSON.stringify(response.data.data.token, null, 2));
-          console.log(loginUrl,"url")
+          console.log(loginUrl, 'url');
           SecureStore.setItem('token', response.data.data.token);
           console.log('Token stored successfully');
           setLoading(false);
@@ -160,7 +160,16 @@ console.log(loginUrl)
               <AntDesign name={showPass ? 'eye' : 'eyeo'} size={24} color={colors.primary} />
             </TouchableOpacity>
           </XStack>
-          <TouchableOpacity onPress={handleSubmit} style={styles.buttonPrimary}>
+          <XStack>
+            <PrimaryBtn onPress={handleSubmit} isBold>
+              {loading ? (
+                (Keyboard.dismiss(),
+                (<Progress.CircleSnail thickness={2} size={22} color={['white']} />))
+              ) : "Login"}
+            </PrimaryBtn>
+          </XStack>
+          {/* <PrimaryBtn onPress={handleSubmit}>Login</PrimaryBtn> */}
+          {/* <TouchableOpacity onPress={handleSubmit} style={styles.buttonPrimary}>
             {loading ? (
               (Keyboard.dismiss(),
               (<Progress.CircleSnail thickness={2} size={22} color={['white']} />))
@@ -169,13 +178,13 @@ console.log(loginUrl)
                 Login
               </Text>
             )}
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <XStack alignItems="center" justifyContent="center" gap="$2" flexWrap="wrap">
             <PrimBold>Do you have delete account?</PrimBold>
-            <TouchableOpacity onPress={() => router.push("/DeleteUser")}>
+            <TouchableOpacity onPress={() => router.push('/DeleteUser')}>
               <LinkText>Delete Account</LinkText>
             </TouchableOpacity>
-      </XStack>
+          </XStack>
         </YStack>
       </Card>
     </KeyboardAvoidingView>

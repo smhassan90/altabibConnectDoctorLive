@@ -11,6 +11,7 @@ import Header from './../../../../components/Header';
 import { userData } from './../../../..//components/home/CustomContent';
 import { CusText } from './../../../../components/CusText';
 import { handleLogout } from './../../../..//components/home/CustomContent';
+import { PrimaryBtn, SecondaryBtn } from '~/components/CusBtn';
 
 export default function Page() {
   const [password, setPassword] = useState('');
@@ -189,23 +190,27 @@ export default function Page() {
                 </XStack>
               </>
             ) : (
-              <TouchableOpacity
-                style={styles.primBtn}
-                onPress={() => {
-                  setChangePassState(!changePassState);
-                }}>
-                <Text color={colors.white} fontFamily={'ArialB'}>
-                  Change Password
-                </Text>
-              </TouchableOpacity>
+              // <TouchableOpacity
+              //   style={styles.primBtn}
+              //   onPress={() => {
+              //     setChangePassState(!changePassState);
+              //   }}>
+              //   <Text color={colors.white} fontFamily={'ArialB'}>
+              //     Change Password
+              //   </Text>
+              // </TouchableOpacity>
+              <XStack>
+                <PrimaryBtn onPress={() => {setChangePassState(!changePassState)}} isBold>Change Password</PrimaryBtn>
+              </XStack>
             )}
-            
-
-            <TouchableOpacity style={styles.secBtn} onPress={handleLogout}>
+            <XStack>
+                <SecondaryBtn onPress={handleLogout} isBold>Logout</SecondaryBtn>
+            </XStack>
+            {/* <TouchableOpacity style={styles.secBtn} onPress={handleLogout}>
               <Text fontFamily={'ArialB'} color={colors.white}>
                 Logout
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </Card>
         </YStack>
       </View>

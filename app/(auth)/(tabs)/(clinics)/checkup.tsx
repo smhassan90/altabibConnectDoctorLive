@@ -29,6 +29,7 @@ import * as SecureStore from 'expo-secure-store';
 import Header from '../../../../components/Header';
 import { CusText } from '../../../../components/CusText';
 import { useSelector } from 'react-redux';
+import { PrimaryBtn, SecondaryBtn } from '~/components/CusBtn';
 
 const Page = () => {
   const router = useRouter();
@@ -310,13 +311,13 @@ const Page = () => {
                       placeholderTextColor={colors.primary}
                       style={styl.input}
                     />
-
-                    <Button
+                    <PrimaryBtn onPress={handleAddTreatment}>Add Treatment</PrimaryBtn>
+                    {/* <Button
                       backgroundColor={colors.primary}
                       fontFamily={'ArialB'}
                       onPress={handleAddTreatment}>
                       Add Treatment
-                    </Button>
+                    </Button> */}
                     {treatments.map((treatment, index) => (
                       <Card
                         gap={spacingM}
@@ -343,25 +344,28 @@ const Page = () => {
                 <CusText bold size="md" color="primary">
                   Choose Follow-up Date:
                 </CusText>
-                <Button onPress={() => setIsModalVisible(true)} backgroundColor={colors.yellow}>
+                {/* <Button onPress={() => setIsModalVisible(true)} backgroundColor={colors.yellow}>
                   <ButtonText fontFamily={'ArialB'}>{currDate}</ButtonText>
-                </Button>
+                </Button> */}
+                <SecondaryBtn onPress={() => setIsModalVisible(true)}>{currDate}</SecondaryBtn>
 
                 {/*  Checkbox completed */}
                 <CheckboxWithLabel size="$4" checked={checked} onChange={setChecked} />
 
                 {/* Checkup Completed */}
                 <XStack gap={spacingM}>
-                  <Button flex={1} backgroundColor={colors.yellow}>
+                  {/* <Button flex={1} backgroundColor={colors.yellow}>
                     <ButtonText
                       onPress={() => router.push('/patientHistory')}
                       fontFamily={'ArialB'}>
                       Patient History
                     </ButtonText>
-                  </Button>
-                  <Button onPress={updateAppointment} flex={1} backgroundColor={colors.primary}>
+                  </Button> */}
+                  <SecondaryBtn onPress={() => router.push('/patientHistory')}>Patient History</SecondaryBtn>
+                  <PrimaryBtn onPress={updateAppointment}>Submit</PrimaryBtn>
+                  {/* <Button onPress={updateAppointment} flex={1} backgroundColor={colors.primary}>
                     <ButtonText fontFamily={'ArialB'}>Submit</ButtonText>
-                  </Button>
+                  </Button> */}
                 </XStack>
               </YStack>
             </ScrollView>

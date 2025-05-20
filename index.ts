@@ -21,7 +21,6 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   };
 
   try {
-    console.log("Hello Osama")
     const existing = await AsyncStorage.getItem('notifications');
     const notifications = existing ? JSON.parse(existing) : [];
     notifications.unshift(newNotification);

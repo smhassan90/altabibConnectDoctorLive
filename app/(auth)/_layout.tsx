@@ -39,7 +39,6 @@ const DrawerLayout = () => {
             AppointmentId: remoteMessage.data?.AppointmentId,
             read: false,
           };
-          console.log(remoteMessage,"remoteMessage Osama OKAY")
           try {
             const existing = await AsyncStorage.getItem('notifications');
             const notifications = existing ? JSON.parse(existing) : [];

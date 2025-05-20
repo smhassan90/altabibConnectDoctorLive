@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TitleBar from './../../../../components/TitleBar';
 import { colors, paddingM, paddingL, styles, spacingL, spacingS } from './../../../../app/styles';
 import { Card, Image, Text, View, XStack, YStack } from 'tamagui';
@@ -10,6 +10,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import dayjs from 'dayjs';
+import { router } from 'expo-router';
+import { useDispatch } from 'react-redux';
+import { selectPatientId } from '~/context/actions/selectedPatientAction';
 type Notification = {
   read: boolean;
   timestamp: number;
@@ -17,6 +20,7 @@ type Notification = {
 };
 
 export default function Page() {
+  const dispatch = useDispatch();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [refresh, setRefresh] = useState(false);
   const isFocused = useIsFocused();
@@ -28,7 +32,7 @@ export default function Page() {
       const filtered = notifications.filter((notification) => {
         const notificationTime = dayjs(notification.timestamp);
         const diffInMinutes = now.diff(notificationTime, 'minute');
-        return diffInMinutes <= 5;
+        return diffInMinutes <= 15;
       });
       setNotifications(filtered);
     }
@@ -39,13 +43,18 @@ export default function Page() {
     }
     setRefresh(false);
   }, [isFocused, refresh]);
-  const handleNotificationPress = async (index) => {
+  const handleNotificationPress = async (item,index) => {
     const updated = [...notifications];
     if (!updated[index].read) {
       updated[index].read = true;
-      await AsyncStorage.setItem('notifications', JSON.stringify(updated));
-      setNotifications(updated);
+      await AsyncStorage.setItem('notifications', JSON.stringify(updated))
+      setNotifications(updated)
     }
+    router.push({
+    pathname: '/(auth)/(tabs)/(clinics)/getAppointment',
+    params: { appointmentId: item.AppointmentId },
+  });
+    dispatch(selectPatientId(item.AppointmentId))
   };
   return (
     <AlertNotificationRoot>
@@ -79,7 +88,7 @@ export default function Page() {
             renderItem={({ item, index }) => (
               <NotificationCard
                 notification={item}
-                onPress={() => handleNotificationPress(index)}
+                onPress={() => handleNotificationPress(item,index)}
               />
             )}
           />

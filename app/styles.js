@@ -51,6 +51,7 @@ export const fontXXL = 28;
 
 export const colors = {
   primary: '#0066a1',
+  primaryLight:"#0066a199",
   primaryDark: '#2d3181',
   gradSec: '#23333a',
   black: '#525252',
@@ -58,8 +59,10 @@ export const colors = {
   labelGray: '#8a8a8a',
   linkBlue: '#0066a1',
   yellow: '#ffa600',
+  yellowLight:"#ffa60180",
   green: '#0ab99c',
   red: '#ff0000',
+  redLight:"#ff000080",
   lightGray: '#f5f5f5',
   border: '#e6e6e6',
 };

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TouchableOpacity, Platform } from 'react-native';
 import { FlatList, RefreshControl } from 'react-native-gesture-handler';
 import { Button, ButtonText, Card, Text, View, XStack, YStack } from 'tamagui';
@@ -10,13 +10,14 @@ import { url } from '../../../../env';
 import * as SecureStore from 'expo-secure-store';
 import dayjs from 'dayjs';
 import { CusText } from '../../../../components/CusText';
-import { CusBtn } from '../../../../components/CusBtn';
+import { CusBtn, PrimaryBtn, SecondaryBtn } from '../../../../components/CusBtn';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import Header from '../../../../components/Header';
 import { useDispatch } from 'react-redux';
 import { selectPatient } from '../../../../context/actions/selectedPatientAction';
 
 export default function Page() {
+  const flatListRef = useRef<FlatList>(null);
   const dispatch = useDispatch();
   const token = SecureStore.getItem('token');
   const clinicId = SecureStore.getItem('clinicId');
@@ -200,6 +201,7 @@ export default function Page() {
         )}
         {activeTab === 'PENDING' ? (
           <FlatList
+            ref={flatListRef}
             refreshControl={
               <RefreshControl
                 refreshing={refresh}
@@ -265,18 +267,20 @@ export default function Page() {
                     </CusText>
                   </XStack>
                   <XStack gap={spacingM}>
-                    <CusBtn
+                    {/* <CusBtn
                       onPress={() => goToHisory(item.patientId.toString())}
                       color={colors.primary}
                       textColor="white">
                       Patient History
-                    </CusBtn>
-                    <CusBtn
+                    </CusBtn> */}
+                    <PrimaryBtn onPress={() => goToHisory(item.patientId.toString())}>Patient History</PrimaryBtn>
+                    <SecondaryBtn onPress={() => goToCheckup(item)}>Checkup</SecondaryBtn>
+                    {/* <CusBtn
                       onPress={() => goToCheckup(item)}
                       color={colors.yellow}
                       textColor="white">
                       Checkup
-                    </CusBtn>
+                    </CusBtn> */}
                   </XStack>
                 </Card>
               </>
@@ -346,14 +350,15 @@ export default function Page() {
                   </CusText>
                 </XStack>
                 <XStack gap={spacingM}>
-                  <Button
+                  <PrimaryBtn onPress={() => goToHisory(item.patientId.toString())}>Patient History</PrimaryBtn>
+                  {/* <Button
                     onPress={() => goToHisory(item.patientId.toString())}
                     flex={1}
                     backgroundColor={colors.primary}>
                     <ButtonText fontFamily={fontBold} fontSize={14} color={colors.white}>
                       Patient History
                     </ButtonText>
-                  </Button>
+                  </Button> */}
                 </XStack>
               </Card>
             )}

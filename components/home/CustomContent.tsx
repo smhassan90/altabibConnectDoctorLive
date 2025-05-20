@@ -2,7 +2,7 @@ import { Alert, TouchableOpacity } from 'react-native';
 import React, { useEffect } from 'react';
 import { DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import { router, useNavigation } from 'expo-router';
-import { Button, ButtonText, Text, View, Image, YStack } from 'tamagui';
+import { Button, ButtonText, Text, View, Image, YStack, XStack } from 'tamagui';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { tokenCache } from './../../app/getToken';
 import * as SecureStore from 'expo-secure-store';
@@ -12,6 +12,7 @@ import constants from 'expo-constants';
 import { colors, iconSize } from './../../app/styles';
 import { FontAwesome, FontAwesome6, MaterialIcons, SimpleLineIcons,Ionicons  } from '@expo/vector-icons';
 import { DrawerActions } from '@react-navigation/native';
+import { RedBtn } from '../CusBtn';
 
 type userData = {
   name: string;
@@ -189,18 +190,6 @@ const handleDeleteAccount = () => {
           style={{ marginLeft: 20 }}
           labelStyle={{ fontFamily: 'ArialB', color: colors.white }}
           icon={({ size, color }) => (
-            <FontAwesome name="user-md" size={iconSize} color={colors.yellow} />
-          )}
-          label={'Profile'}
-          onPress={() => {
-            router.push('/(auth)/(tabs)/(profile)');
-            navigation.dispatch(DrawerActions.closeDrawer());
-          }}
-        />
-        <DrawerItem
-          style={{ marginLeft: 20 }}
-          labelStyle={{ fontFamily: 'ArialB', color: colors.white }}
-          icon={({ size, color }) => (
             <Ionicons name="notifications" size={iconSize} color={colors.yellow} />
           )}
           label={'Notification'}
@@ -209,19 +198,37 @@ const handleDeleteAccount = () => {
             navigation.dispatch(DrawerActions.closeDrawer());
           }}
         />
+        <DrawerItem
+          style={{ marginLeft: 20 }}
+          labelStyle={{ fontFamily: 'ArialB', color: colors.white }}
+          icon={({ size, color }) => (
+            <FontAwesome name="user-md" size={iconSize} color={colors.yellow} />
+          )}
+          label={'Profile'}
+          onPress={() => {
+            router.push('/(auth)/(tabs)/(profile)');
+            navigation.dispatch(DrawerActions.closeDrawer());
+          }}
+        />
       </DrawerContentScrollView>
 
       <View paddingBottom={bottom + 20}>
-        <Button backgroundColor={'red'} marginHorizontal={10} onPress={handleLogout}>
+        {/* <Button backgroundColor={'red'} marginHorizontal={10} onPress={handleLogout}>
           <ButtonText fontFamily={'ArialB'}>Logout</ButtonText>
-        </Button>
-        <Button
+        </Button> */}
+        <XStack>
+          <RedBtn onPress={handleLogout} isBold >Logout</RedBtn>
+        </XStack>
+        <XStack>
+          <RedBtn onPress={handleDeleteAccount} isBold >Permanent Delete Account</RedBtn>
+        </XStack>
+        {/* <Button
           backgroundColor={'red'}
           marginHorizontal={10}
           marginTop={10}
           onPress={handleDeleteAccount}>
           <ButtonText fontFamily={'ArialB'}>Permanent Delete Account</ButtonText>
-        </Button>
+        </Button> */}
       </View>
     </View>
   );

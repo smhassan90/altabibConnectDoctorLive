@@ -21,7 +21,7 @@ import { router } from 'expo-router';
 import Spinner from '~/components/Spinner';
 import * as SecureStore from 'expo-secure-store';
 import { CusText } from '../../../../components/CusText';
-import { CusBtn } from '../../../../components/CusBtn';
+import { CusBtn, SecondaryBtn } from '../../../../components/CusBtn';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { HeartLoader } from '../../../../components/CusAnimations';
 import constants from 'expo-constants';
@@ -205,14 +205,19 @@ const Page = () => {
                       {/* <CusBtn color={colors.yellow} textColor="white">
                         Get Token
                       </CusBtn> */}
-                      <CusBtn
+                      {/* <CusBtn
                         onPress={() =>
                           handleViewAppointment(item.clinic.id.toString(), '2024-03-04')
                         }
                         color={colors.yellow}
                         textColor="white">
                         View Appoinments
-                      </CusBtn>
+                      </CusBtn> */}
+                      <SecondaryBtn onPress={() =>
+                          handleViewAppointment(item.clinic.id.toString(), '2024-03-04')
+                        }>
+                        View Appoinments
+                      </SecondaryBtn>
                     </XStack>
                   </Card>
                   {/* Check Appointment Button */}

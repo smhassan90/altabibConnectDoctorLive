@@ -32,19 +32,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="(profile)"
-        options={{
-          headerShown: false,
-          tabBarLabel: 'Profile',
-          tabBarIcon: ({color}) => <FontAwesome name="user-md" size={24} color={color} />
-        }}
-      />
-      <Tabs.Screen
         name="(notifications)"
         options={{
           headerShown: false,
           tabBarLabel: 'Notification',
           tabBarIcon: ({color}) => <Ionicons name="notifications" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="(profile)"
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({color}) => <FontAwesome name="user-md" size={24} color={color} />
         }}
       />
     </Tabs>
